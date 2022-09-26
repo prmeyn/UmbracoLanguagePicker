@@ -1,0 +1,12 @@
+﻿.data-api-picker-edit-label {
+    font-size: 12px;
+    font-style: italic;
+    position: relative;
+    padding-left: 10px;
+    color: #8d8c90;
+    cursor: pointer;
+    transition: color .2s ease-in-out;
+}
+    .data-api-picker-edit-label:hover {
+        color: #515054;
+    }

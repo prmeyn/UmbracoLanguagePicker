@@ -1,0 +1,39 @@
+{
+	"name": "UmbracoLanguagePicker",
+	"version": "10.0.0",
+	"allowPackageTelemetry": true,
+	propertyEditors: [
+		{
+			alias: "UmbracoLanguagePicker",
+			name: "UmbracoLanguagePicker",
+			icon: "icon-code",
+			group: "Rich Content",
+			editor: {
+				view: "~/App_Plugins/UmbracoLanguagePicker/index.html",
+				valueType: "JSON"
+			},
+			prevalues: {
+				fields: [
+					{
+						label: "Unique Filter",
+						description: "Each sibling node can only pick a unique value",
+						key: "uniqueFilter",
+						view: "boolean"
+					},
+					{
+						label: "Allow No Value",
+						description: "Allow Null as a valid option",
+						key: "allowNull",
+						view: "boolean"
+					}
+				]
+			}
+		}
+	],
+	javascript: [
+		'~/App_Plugins/UmbracoLanguagePicker/index.js'
+	],
+	css: [
+		'~/App_Plugins/UmbracoLanguagePicker/style.css'
+	]
+}

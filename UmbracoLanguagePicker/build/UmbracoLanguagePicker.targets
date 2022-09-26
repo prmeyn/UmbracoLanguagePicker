@@ -1,0 +1,21 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <UmbracoLanguagePickerContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\UmbracoLanguagePicker\**\*.*</UmbracoLanguagePickerContentFilesPath>
+    </PropertyGroup>
+
+    <Target Name="CopyUmbracoLanguagePickerAssets" BeforeTargets="Build">
+        <ItemGroup>
+            <UmbracoLanguagePickerContentFiles Include="$(UmbracoLanguagePickerContentFilesPath)" />
+        </ItemGroup>
+        <Message Text="Copying UmbracoLanguagePicker files: $(UmbracoLanguagePickerContentFilesPath) - #@(UmbracoLanguagePickerContentFiles->Count()) files" Importance="high" />
+        <Copy SourceFiles="@(UmbracoLanguagePickerContentFiles)" DestinationFiles="@(UmbracoLanguagePickerContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\UmbracoLanguagePicker\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    </Target>
+    
+    <Target Name="ClearUmbracoLanguagePickerAssets" BeforeTargets="Clean">
+        <ItemGroup>
+            <UmbracoLanguagePickerDir Include="$(MSBuildProjectDirectory)\App_Plugins\UmbracoLanguagePicker\" />
+        </ItemGroup>
+        <Message Text="Clear old UmbracoLanguagePicker data" Importance="high" />
+        <RemoveDir Directories="@(UmbracoLanguagePickerDir)" />
+    </Target>
+</Project>
