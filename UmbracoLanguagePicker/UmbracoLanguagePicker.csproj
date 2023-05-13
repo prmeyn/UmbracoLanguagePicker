@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ContentTargetFolders>.</ContentTargetFolders>
     <Product>UmbracoLanguagePicker</Product>
     <PackageId>UmbracoLanguagePicker</PackageId>
@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.2.1" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.2.1" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="11.3.1" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="11.3.1" />
     <PackageReference Include="UmbracoKeyValuePropertyEditor" Version="5.0.0" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
