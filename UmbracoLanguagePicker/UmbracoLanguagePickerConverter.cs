@@ -4,7 +4,7 @@ using Umbraco.Cms.Core.PropertyEditors;
 
 namespace UmbracoLanguagePicker
 {
-	public class UmbracoLanguagePickerConverter : IPropertyValueConverter
+	public sealed class UmbracoLanguagePickerConverter : IPropertyValueConverter
 	{
 		public bool IsConverter(IPublishedPropertyType propertyType) => propertyType.EditorAlias == "UmbracoLanguagePicker";
 		public object ConvertIntermediateToObject(IPublishedElement owner, IPublishedPropertyType propertyType, PropertyCacheLevel referenceCacheLevel, object inter, bool preview) => inter as string;

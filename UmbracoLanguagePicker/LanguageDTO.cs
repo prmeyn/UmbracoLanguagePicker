@@ -1,6 +1,6 @@
 ﻿namespace UmbracoLanguagePicker
 {
-	public class LanguageDTO
+	public sealed class LanguageDTO
 	{
 		public string ISOCode { get; set; }
 		public string EnglishName { get; set; }

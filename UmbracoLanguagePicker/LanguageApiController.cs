@@ -11,7 +11,7 @@ namespace UmbracoLanguagePicker
 {
 
 	[PluginController("UmbracoLanguagePicker")]
-	public class LanguageApiController : KeyValueUmbracoPropertyEditorController
+	public sealed class LanguageApiController : KeyValueUmbracoPropertyEditorController
 	{
 		private readonly UmbracoHelper _umbracoHelper;
 		private readonly ILocalizationService _localizationService;

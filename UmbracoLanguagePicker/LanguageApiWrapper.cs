@@ -4,7 +4,7 @@ using Umbraco.Cms.Core.Services;
 
 namespace UmbracoLanguagePicker
 {
-	public class LanguageApiWrapper
+	public sealed class LanguageApiWrapper
 	{
 		private readonly ILocalizationService _localizationService;
 
