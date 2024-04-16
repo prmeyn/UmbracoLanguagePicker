@@ -33,7 +33,16 @@ namespace UmbracoLanguagePicker
                     if (int.TryParse(nodeIdOrGuid, out int nodeId) && nodeId > 0)
                     {
                         var currentNode = _umbracoHelper.Content(nodeId);
-                        usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode?.Parent, propertyAlias, nodeId).ToArray();
+                        var parent = currentNode?.Parent;
+                        if (parent == null)
+                        {
+                            usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId).ToArray();
+                        }
+                        else
+                        {
+                            usedUpLanguageCodes = GetValuesOfChildrensProperty(parent, propertyAlias, nodeId).Union(GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId)).ToArray();
+                        }
+
                     }
                     else if (Guid.TryParse(nodeIdOrGuid, out Guid Key))
                     {
