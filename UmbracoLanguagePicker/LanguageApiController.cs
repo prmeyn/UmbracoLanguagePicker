@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Attributes;
@@ -22,15 +23,20 @@ namespace UmbracoLanguagePicker
 			_localizationService = localizationService;
 		}
 
-		public override IOrderedEnumerable<KeyValuePair<string, string>> GetKeyValueList(int nodeId, string propertyAlias, int uniqueFilter = 0, int allowNull = 0)
+		public override IOrderedEnumerable<KeyValuePair<string, string>> GetKeyValueList(string nodeIdStr, string propertyAlias, int uniqueFilter = 0, int allowNull = 0)
 		{
 			try
 			{
 				string[] usedUpLanguageCodes = Array.Empty<string>();
 				try
 				{
-					var parent = _umbracoHelper.Content(nodeId).Parent;
-					usedUpLanguageCodes = (parent == null ? _umbracoHelper.Content(nodeId).Children.Where(c => c.Id != nodeId).Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant()) : parent.Children.Where(c => c.Id != nodeId).Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant()).Union(_umbracoHelper.Content(nodeId).Children.Where(c => c.Id != nodeId).Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant()))).ToArray();
+                    var nodeId = int.Parse(nodeIdStr);
+                    var currentNode = _umbracoHelper.Content(nodeId);
+					if (currentNode != null)
+					{
+                        var parent = currentNode.Parent;
+                        usedUpLanguageCodes = (parent == null ? GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId) : GetValuesOfChildrensProperty(parent, propertyAlias, nodeId).Union(GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId))).ToArray();
+                    }
 				}
 				catch { uniqueFilter = 0; }
 				LanguageDTO[] languageList = null;
@@ -53,5 +59,10 @@ namespace UmbracoLanguagePicker
 				return null;
 			}
 		}
-	}
+
+        private IEnumerable<string> GetValuesOfChildrensProperty(IPublishedContent node, string propertyAlias, int nodeId)
+        {
+			return node.Children.Where(c => c.Id != nodeId).Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant());
+        }
+    }
 }
