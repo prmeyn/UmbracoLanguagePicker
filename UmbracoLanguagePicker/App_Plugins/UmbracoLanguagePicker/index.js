@@ -22,7 +22,7 @@ angular.module("umbraco").controller("UmbracoLanguagePickerController", function
 		}
 	});
 	$scope.model.list = {};
-	$http.get("/umbraco/backoffice/UmbracoLanguagePicker/LanguageApi/GetKeyValueList?nodeId=" + $routeParams.id + "&propertyAlias=" + $scope.model.alias + "&uniqueFilter=" + ($scope.model.config.uniqueFilter || 0) + "&allowNull=" + ($scope.model.config.allowNull || 0)).then(function (response) {
+	$http.get("/umbraco/backoffice/UmbracoLanguagePicker/LanguageApi/GetKeyValueList?nodeIdOrGuid=" + $routeParams.id + "&propertyAlias=" + $scope.model.alias + "&uniqueFilter=" + ($scope.model.config.uniqueFilter || 0) + "&allowNull=" + ($scope.model.config.allowNull || 0)).then(function (response) {
 		$scope.model.list = response.data;
 		var valueFromList = _.find($scope.model.list, function (item) { return item.Key === $scope.model.value });
 		if (valueFromList) { $scope.displayValue = valueFromList.Value };
