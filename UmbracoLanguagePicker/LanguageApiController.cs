@@ -30,9 +30,18 @@ namespace UmbracoLanguagePicker
                 string[] usedUpLanguageCodes = Array.Empty<string>();
                 try
                 {
+                    IPublishedContent currentNode = null;
                     if (int.TryParse(nodeIdOrGuid, out int nodeId) && nodeId > 0)
                     {
-                        var currentNode = _umbracoHelper.Content(nodeId);
+                        currentNode = _umbracoHelper.Content(nodeId);
+                    }
+                    else if (Guid.TryParse(nodeIdOrGuid, out Guid Key))
+                    {
+                        currentNode = _umbracoHelper.Content(Key);
+                    }
+
+                    if (currentNode != null)
+                    {
                         var parent = currentNode?.Parent;
                         if (parent == null)
                         {
@@ -42,12 +51,6 @@ namespace UmbracoLanguagePicker
                         {
                             usedUpLanguageCodes = GetValuesOfChildrensProperty(parent, propertyAlias, nodeId).Union(GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId)).ToArray();
                         }
-
-                    }
-                    else if (Guid.TryParse(nodeIdOrGuid, out Guid Key))
-                    {
-                        var currentNode = _umbracoHelper.Content(Key);
-                        usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode?.Parent, propertyAlias, currentNode.Id).ToArray();
                     }
                     else
                     {
