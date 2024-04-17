@@ -27,43 +27,41 @@ namespace UmbracoLanguagePicker
         {
             try
             {
+                
+                LanguageDTO[] languageList = null;
                 string[] usedUpLanguageCodes = Array.Empty<string>();
-                try
+                if (uniqueFilter == 1)
                 {
-                    if (int.TryParse(nodeIdOrGuid, out int nodeId) && nodeId > 0)
+                    try
                     {
-                        var currentNode = _umbracoHelper.Content(nodeId);
-                        var parent = currentNode?.Parent;
-                        if (parent == null)
+                        if (int.TryParse(nodeIdOrGuid, out int nodeId) && nodeId > 0)
                         {
-                            usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId).ToArray();
+                            var currentNode = _umbracoHelper.Content(nodeId);
+                            var parent = currentNode?.Parent;
+                            if (parent == null)
+                            {
+                                usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId).ToArray();
+                            }
+                            else
+                            {
+                                usedUpLanguageCodes = GetValuesOfChildrensProperty(parent, propertyAlias, nodeId).Union(GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId)).ToArray();
+                            }
+
+                        }
+                        else if (Guid.TryParse(nodeIdOrGuid, out Guid Key))
+                        {
+                            var currentNode = _umbracoHelper.Content(Key);
+                            usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode?.Parent, propertyAlias, currentNode.Id).ToArray();
                         }
                         else
                         {
-                            usedUpLanguageCodes = GetValuesOfChildrensProperty(parent, propertyAlias, nodeId).Union(GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId)).ToArray();
+                            usedUpLanguageCodes = GetValuesOfChildrensProperty(null, propertyAlias, nodeId).ToArray();
                         }
+                    }
+                    catch { uniqueFilter = 0; }
+                }
+                languageList = uniqueFilter == 0 ? (new LanguageApiWrapper(_localizationService)).AllLanguages.ToArray() : (new LanguageApiWrapper(_localizationService)).AllLanguages.Where(c => !usedUpLanguageCodes.Contains(c.ISOCode.ToLowerInvariant())).ToArray();
 
-                    }
-                    else if (Guid.TryParse(nodeIdOrGuid, out Guid Key))
-                    {
-                        var currentNode = _umbracoHelper.Content(Key);
-                        usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode?.Parent, propertyAlias, currentNode.Id).ToArray();
-                    }
-                    else
-                    {
-                        usedUpLanguageCodes = GetValuesOfChildrensProperty(null, propertyAlias, nodeId).ToArray();
-                    }
-                }
-                catch { uniqueFilter = 0; }
-                LanguageDTO[] languageList = null;
-                if (uniqueFilter == 1)
-                {
-                    languageList = (new LanguageApiWrapper(_localizationService)).AllLanguages.Where(c => !usedUpLanguageCodes.Contains(c.ISOCode.ToLowerInvariant())).ToArray();
-                }
-                else
-                {
-                    languageList = (new LanguageApiWrapper(_localizationService)).AllLanguages.ToArray();
-                }
                 if (allowNull == 1)
                 {
                     languageList = languageList.Prepend(new LanguageDTO { ISOCode = "", EnglishName = "NONE" }).ToArray();
