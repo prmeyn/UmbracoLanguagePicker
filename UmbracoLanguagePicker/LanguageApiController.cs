@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Umbraco.Cms.Api.Management.Routing;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
-using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
 using UmbracoKeyValuePropertyEditor;
 
 namespace UmbracoLanguagePicker
 {
 
-    [PluginController("UmbracoLanguagePicker")]
+    // [PluginController("UmbracoLanguagePicker")]
+    [VersionedApiBackOfficeRoute("")]
+    [ApiExplorerSettings(GroupName = "UmbracoLanguagePicker")]
     public sealed class LanguageApiController : KeyValueUmbracoPropertyEditorController
     {
         private readonly UmbracoHelper _umbracoHelper;
@@ -22,7 +25,8 @@ namespace UmbracoLanguagePicker
             _umbracoHelper = umbracoHelper;
             _localizationService = localizationService;
         }
-
+        
+        [HttpGet("get-key-value-list")]
         public override IOrderedEnumerable<KeyValuePair<string, string>> GetKeyValueList(string nodeIdOrGuid, string propertyAlias, int uniqueFilter = 0, int allowNull = 0)
         {
             try
