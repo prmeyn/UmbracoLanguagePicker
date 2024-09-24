@@ -91,7 +91,6 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       })
     })
     this.consumeContext('UmbMenuStructureWorkspaceContext', (instance: any) => {
-      console.log("instance: ", instance)
       const getParentArray = instance.structure.source._value;
       // If you select a content node at the root level, the getParentArray will contain two objects.
       // The first object has a null value. The second object has the root content node id.
@@ -101,40 +100,23 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
         const selectParent = getParentArray.length - 2;
         const x = getParentArray[selectParent];
         this.contentParentNode = x ? x.unique: null;
-        console.log(parent)
       } else {
         // If the getParentArray length is not 2, that means the root content node id is at index [1]
         const rootParentNode = getParentArray[0].unique
         this.contentParentNode = rootParentNode
       }
-      console.log(this.contentParentNode)
-
-      this.observe(instance.structure, (value) => {
-        console.log(value)
-        // this.contentParentNode = value;
-      });
-
     });
   }
   
   async firstUpdated(changed: any) {
     super.firstUpdated(changed)
-    console.log(this.value)
     const {data} = await this.languageCollectionRepository.requestCollection({})
     this.mappedLanguageList[this._lowerCaseNone] = "NONE";
     data.items.forEach(element => {
       this.mappedLanguageList[element.unique.toLowerCase()] = element.name
     })
-    console.log(this.mappedLanguageList)
     this.displayValue = this.mappedLanguageList[this.value || ""];
-    console.log(this.displayValue)
     this.getLanguages()
-    // const { data } = await this.languageCollectionRepository.requestCollection({})
-    // if (data) {
-    //   this.languageList = data.items.map((language:any) => {
-    //     return { name: language.name, value: language.unique, selected: language.unique === this.value}
-    //   })
-    // }
   }
 
   private assignToNumber(config: boolean | undefined): number {
@@ -157,14 +139,13 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       })
       const mappedValue = mappedData.find((element:any) => element.value === this.value)
       this.languageList = mappedData;
-      console.log(this.languageList)
       if(mappedValue) {
         this.displayValue = this.mappedLanguageList[mappedValue.value];
       }
       this.languageError = false;
     } catch (error) {
       this.languageError = true;
-      console.log(`An error occured: \n${error}`, )
+      console.error(error)
     }
   }
   
@@ -172,7 +153,6 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
     const langValue = e.target.value as string;
     this.value = langValue;
     this._selectedLanguage = langValue
-    console.log(langValue)
     
     this.dispatchEvent(new UmbPropertyValueChangeEvent());
   }
