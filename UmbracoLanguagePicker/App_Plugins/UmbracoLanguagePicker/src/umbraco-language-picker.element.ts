@@ -92,19 +92,9 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
     })
     this.consumeContext('UmbMenuStructureWorkspaceContext', (instance: any) => {
       const getParentArray = instance.structure.source._value;
-      // If you select a content node at the root level, the getParentArray will contain two objects.
-      // The first object has a null value. The second object has the root content node id.
-      // Therefore we have this "hack" in place to check if the array length is not 2.
-      // If the array length is greater than 2, we know that we are not at the root content level
-      if(getParentArray.length !== 2) {
-        const selectParent = getParentArray.length - 2;
-        const x = getParentArray[selectParent];
-        this.contentParentNode = x ? x.unique: null;
-      } else {
-        // If the getParentArray length is not 2, that means the root content node id is at index [1]
-        const rootParentNode = getParentArray[0].unique
-        this.contentParentNode = rootParentNode
-      }
+      const parentIndex = getParentArray.length - 2; // weird hack
+      const selectParent = getParentArray[parentIndex];
+      this.contentParentNode = selectParent ? selectParent.unique : null;
     });
   }
   
