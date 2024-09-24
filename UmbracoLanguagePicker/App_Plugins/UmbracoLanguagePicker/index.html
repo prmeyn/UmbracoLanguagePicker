@@ -1,7 +1,0 @@
-<div ng-controller="UmbracoLanguagePickerController">
-	<label ng-if="!inEditState">{{displayValue}}</label>
-	<div ng-if="inEditState">
-		<select ng-model="model.value" ng-options="item.Key as item.Value for item in model.list | orderBy:'Value'"></select>
-	</div>
-	<span ng-if="!inEditState" class="data-api-picker-edit-label" ng-click="onEdit()">{{translations.UmbracoLanguagePicker_Edit}}</span>
-</div>
