@@ -1,7 +1,7 @@
 {
   "$schema": "../../umbraco-package-schema.json",
   "name": "UmbracoLanguagePicker",
-  "version": "14.2.0",
+  "version": "14.3.0",
   "extensions": [
     {
       "type": "propertyEditorUi",
