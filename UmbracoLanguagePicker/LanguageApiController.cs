@@ -11,8 +11,6 @@ using UmbracoKeyValuePropertyEditor;
 
 namespace UmbracoLanguagePicker
 {
-
-    // [PluginController("UmbracoLanguagePicker")]
     [VersionedApiBackOfficeRoute("")]
     [ApiExplorerSettings(GroupName = "UmbracoLanguagePicker")]
     public sealed class LanguageApiController : KeyValueUmbracoPropertyEditorController
@@ -83,9 +81,7 @@ namespace UmbracoLanguagePicker
         private IEnumerable<string> GetValuesOfChildrensProperty(IPublishedContent parentNode, string propertyAlias, int? currentNodeId)
         {
             var nodes = parentNode == null ? _umbracoHelper.ContentAtRoot() : parentNode.Children;
-            var x = nodes.Where(c => c.Id != currentNodeId).ToList();
-            var y = x.Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant());
-            return y;
+            return nodes.Where(c => c.Id != currentNodeId).Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant());
         }
     }
 }
