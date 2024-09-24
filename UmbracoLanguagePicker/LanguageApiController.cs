@@ -55,23 +55,6 @@ namespace UmbracoLanguagePicker
                     {
                         parentNode = _umbracoHelper.Content(Key);
                     }
-
-                    if (currentNode != null)
-                    {
-                        var parent = currentNode?.Parent;
-                        if (parent == null)
-                        {
-                            // usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId).ToArray();
-                        }
-                        else if(parent.Id == parentNode.Id)
-                        {
-                            // usedUpLanguageCodes = GetValuesOfChildrensProperty(parent, propertyAlias, nodeId).Union(GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId)).ToArray();
-                        }
-                    }
-                    else
-                    {
-                        // usedUpLanguageCodes = GetValuesOfChildrensProperty(null, propertyAlias, nodeId).ToArray();
-                    }
                     usedUpLanguageCodes = GetValuesOfChildrensProperty(parentNode, propertyAlias, currentNode?.Id).ToArray();
                 }
                 catch { uniqueFilter = 0; }
