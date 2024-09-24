@@ -1,0 +1,46 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "name": "UmbracoLanguagePicker",
+  "version": "0.1.0",
+  "extensions": [
+    {
+      "type": "propertyEditorUi",
+      "alias": "UmbracoLanguagePicker",
+      "name": "UmbracoLanguagePicker",
+      "js": "/App_Plugins/UmbracoLanguagePicker/dist/umbraco-language-picker.js",
+      "elementName": "umbraco-language-picker",
+      "meta": {
+        "label": "UmbracoLanguagePicker",
+        "icon": "icon-flag-alt",
+        "group": "common",
+        "propertyEditorSchemaAlias": "Umbraco.Plain.String",
+        "settings": {
+          "properties": [
+            {
+              "alias": "uniqueFilter",
+              "label": "Unique Filter",
+              "description": "Each sibling node can only pick a unique value",
+              "propertyEditorUiAlias": "Umb.PropertyEditorUi.Toggle"
+            },
+            {
+              "alias": "allowNull",
+              "label": "Allow no value",
+              "description": "Allow Null as a valid option",
+              "propertyEditorUiAlias": "Umb.PropertyEditorUi.Toggle"
+            }
+          ],
+          "defaultData": [
+            {
+              "alias": "uniqueFilter",
+              "value": false
+            },
+            {
+              "alias": "allowNull",
+              "value": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

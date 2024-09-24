@@ -27,13 +27,14 @@ namespace UmbracoLanguagePicker
         }
         
         [HttpGet("get-key-value-list")]
-        public override IOrderedEnumerable<KeyValuePair<string, string>> GetKeyValueList(string nodeIdOrGuid, string propertyAlias, int uniqueFilter = 0, int allowNull = 0)
+        public override IOrderedEnumerable<KeyValuePair<string, string>> GetKeyValueList(string parentNodeIdOrGuid, string nodeIdOrGuid, string propertyAlias, int uniqueFilter = 0, int allowNull = 0)
         {
             try
             {
                 string[] usedUpLanguageCodes = Array.Empty<string>();
                 try
                 {
+                    // Current node block
                     IPublishedContent currentNode = null;
                     if (int.TryParse(nodeIdOrGuid, out int nodeId) && nodeId > 0)
                     {
@@ -43,25 +44,38 @@ namespace UmbracoLanguagePicker
                     {
                         currentNode = _umbracoHelper.Content(Key);
                     }
+                    
+                    // Parent node block
+                    IPublishedContent parentNode = null;
+                    if (int.TryParse(parentNodeIdOrGuid, out int parentNodeId) && parentNodeId > 0)
+                    {
+                        parentNode = _umbracoHelper.Content(parentNodeId);
+                    }
+                    else if (Guid.TryParse(parentNodeIdOrGuid, out Guid Key))
+                    {
+                        parentNode = _umbracoHelper.Content(Key);
+                    }
 
                     if (currentNode != null)
                     {
                         var parent = currentNode?.Parent;
                         if (parent == null)
                         {
-                            usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId).ToArray();
+                            // usedUpLanguageCodes = GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId).ToArray();
                         }
-                        else
+                        else if(parent.Id == parentNode.Id)
                         {
-                            usedUpLanguageCodes = GetValuesOfChildrensProperty(parent, propertyAlias, nodeId).Union(GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId)).ToArray();
+                            // usedUpLanguageCodes = GetValuesOfChildrensProperty(parent, propertyAlias, nodeId).Union(GetValuesOfChildrensProperty(currentNode, propertyAlias, nodeId)).ToArray();
                         }
                     }
                     else
                     {
-                        usedUpLanguageCodes = GetValuesOfChildrensProperty(null, propertyAlias, nodeId).ToArray();
+                        // usedUpLanguageCodes = GetValuesOfChildrensProperty(null, propertyAlias, nodeId).ToArray();
                     }
+                    usedUpLanguageCodes = GetValuesOfChildrensProperty(parentNode, propertyAlias, currentNode?.Id).ToArray();
                 }
                 catch { uniqueFilter = 0; }
+                
                 LanguageDTO[] languageList = null;
                 if (uniqueFilter == 1)
                 {
@@ -73,9 +87,9 @@ namespace UmbracoLanguagePicker
                 }
                 if (allowNull == 1)
                 {
-                    languageList = languageList.Prepend(new LanguageDTO { ISOCode = "", EnglishName = "NONE" }).ToArray();
+                    languageList = languageList.Prepend(new LanguageDTO { ISOCode = "", EnglishName = "" }).ToArray();
                 }
-                return languageList.ToDictionary(c => c.ISOCode.ToLowerInvariant(), c => c.EnglishName).OrderBy(v => v.Key);
+                return languageList.ToDictionary(c => c.ISOCode.ToLowerInvariant(), c => "").OrderBy(v => v.Key);
             }
             catch
             {
@@ -83,10 +97,12 @@ namespace UmbracoLanguagePicker
             }
         }
 
-        private IEnumerable<string> GetValuesOfChildrensProperty(IPublishedContent node, string propertyAlias, int nodeId)
+        private IEnumerable<string> GetValuesOfChildrensProperty(IPublishedContent parentNode, string propertyAlias, int? currentNodeId)
         {
-            var nodes = node == null ? _umbracoHelper.ContentAtRoot() : node.Children;
-            return nodes.Where(c => c.Id != nodeId).Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant());
+            var nodes = parentNode == null ? _umbracoHelper.ContentAtRoot() : parentNode.Children;
+            var x = nodes.Where(c => c.Id != currentNodeId).ToList();
+            var y = x.Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant());
+            return y;
         }
     }
 }
