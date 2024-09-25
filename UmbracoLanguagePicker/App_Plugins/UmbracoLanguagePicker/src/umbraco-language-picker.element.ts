@@ -96,6 +96,9 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       const parentIndex = getParentArray.length - 2; // weird hack
       const selectParent = getParentArray[parentIndex];
       this.contentParentNode = selectParent ? selectParent.unique : null;
+      this.observe(instance.structure, (value) => {
+        console.log(value)
+      });
     });
   }
   
