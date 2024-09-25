@@ -75,7 +75,8 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
     super();
     this.consumeContext(UMB_WORKSPACE_CONTEXT, (context) => {
       this.workspaceContext = context;
-      //grab the node id (guid) from the context
+        //grab the node id (guid) from the context
+        // @ts-ignore
       this.contentNodeId = context.getUnique();
       // context.getEntityType()
     });
@@ -102,17 +103,13 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
     super.firstUpdated(changed)
     const {data} = await this.languageCollectionRepository.requestCollection({})
     this.mappedLanguageList[this._lowerCaseNone] = "NONE";
-    data.items.forEach(element => {
+    data?.items.forEach(element => {
       this.mappedLanguageList[element.unique.toLowerCase()] = element.name
     })
     this.displayValue = this.mappedLanguageList[this.value || ""];
     this.getLanguages()
   }
 
-  private assignToNumber(config: boolean | undefined): number {
-    // Due to the backend using 1 and 0 to determine true or false for the settings, we return the number based on the boolean
-    return config ? 1 : 0;
-  }
 
   private async getLanguages() {
     try {
@@ -121,7 +118,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
         Authorization: `Bearer ${promiseToken}`
       };
       const baseEndpoint = "/umbraco/management/api/v1/get-key-value-list"
-      const data = await fetch(`${baseEndpoint}?parentNodeIdOrGuid=${this.contentParentNode}&nodeIdOrGuid=${this.contentNodeId}&propertyAlias=${this.currentAlias}&uniqueFilter=${this.assignToNumber(this._uniqueFilter)}&allowNull=${this.assignToNumber(this._allowNull)}`, {headers});
+      const data = await fetch(`${baseEndpoint}?parentNodeIdOrGuid=${this.contentParentNode}&nodeIdOrGuid=${this.contentNodeId}&propertyAlias=${this.currentAlias}&uniqueFilter=${!!this._uniqueFilter}&allowNull=${!!this._allowNull}`, {headers});
       const dataJson = await data.json()
         // Need to map it so the uui element can accept and display the data: https://uui.umbraco.com/?path=/docs/uui-select--docs
       const mappedData = dataJson.map((language:any) => {
