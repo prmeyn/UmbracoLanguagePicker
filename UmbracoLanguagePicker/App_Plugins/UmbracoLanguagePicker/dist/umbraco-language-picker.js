@@ -1,14 +1,14 @@
-import { LitElement as g, html as h, css as d, property as s, state as c, customElement as m } from "@umbraco-cms/backoffice/external/lit";
+import { LitElement as g, html as h, css as d, property as i, state as c, customElement as m } from "@umbraco-cms/backoffice/external/lit";
 import { UmbPropertyValueChangeEvent as y } from "@umbraco-cms/backoffice/property-editor";
 import { UmbElementMixin as E } from "@umbraco-cms/backoffice/element-api";
 import { UMB_WORKSPACE_CONTEXT as f } from "@umbraco-cms/backoffice/workspace";
 import { UMB_AUTH_CONTEXT as L } from "@umbraco-cms/backoffice/auth";
 import { UMB_PROPERTY_CONTEXT as N } from "@umbraco-cms/backoffice/property";
 import { UmbLanguageCollectionRepository as _ } from "@umbraco-cms/backoffice/language";
-var v = Object.defineProperty, C = Object.getOwnPropertyDescriptor, i = (e, t, o, n) => {
-  for (var r = n > 1 ? void 0 : n ? C(t, o) : t, l = e.length - 1, u; l >= 0; l--)
-    (u = e[l]) && (r = (n ? u(t, o, r) : u(r)) || r);
-  return n && r && v(t, o, r), r;
+var v = Object.defineProperty, C = Object.getOwnPropertyDescriptor, s = (e, t, n, r) => {
+  for (var o = r > 1 ? void 0 : r ? C(t, n) : t, l = e.length - 1, u; l >= 0; l--)
+    (u = e[l]) && (o = (r ? u(t, n, o) : u(o)) || o);
+  return r && o && v(t, n, o), o;
 };
 let a = class extends E(g) {
   constructor() {
@@ -21,8 +21,10 @@ let a = class extends E(g) {
         this.currentAlias = t;
       });
     }), this.consumeContext("UmbMenuStructureWorkspaceContext", (e) => {
-      const t = e.structure.source._value, o = t.length - 2, n = t[o];
-      this.contentParentNode = n ? n.unique : null;
+      const t = e.structure.source._value, n = t.length - 2, r = t[n];
+      this.contentParentNode = r ? r.unique : null, this.observe(e.structure, (o) => {
+        console.log(o);
+      });
     });
   }
   set config(e) {
@@ -31,8 +33,8 @@ let a = class extends E(g) {
   async firstUpdated(e) {
     super.firstUpdated(e);
     const { data: t } = await this.languageCollectionRepository.requestCollection({});
-    this.mappedLanguageList[this._lowerCaseNone] = "NONE", t == null || t.items.forEach((o) => {
-      this.mappedLanguageList[o.unique.toLowerCase()] = o.name;
+    this.mappedLanguageList[this._lowerCaseNone] = "NONE", t == null || t.items.forEach((n) => {
+      this.mappedLanguageList[n.unique.toLowerCase()] = n.name;
     }), this.displayValue = this.mappedLanguageList[this.value || ""], this.getLanguages();
   }
   async getLanguages() {
@@ -71,52 +73,52 @@ a.styles = [
       }
     `
 ];
-i([
-  s()
+s([
+  i()
 ], a.prototype, "value", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "displayValue", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "languageList", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "contentNodeId", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "myAuthToken", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "currentAlias", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "contentParentNode", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "languageError", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "mappedLanguageList", 2);
-i([
-  s()
+s([
+  i()
 ], a.prototype, "_lowerCaseNone", 2);
-i([
-  s({ attribute: !1 })
+s([
+  i({ attribute: !1 })
 ], a.prototype, "config", 1);
-i([
+s([
   c()
 ], a.prototype, "isEditing", 2);
-i([
+s([
   c()
 ], a.prototype, "_allowNull", 2);
-i([
+s([
   c()
 ], a.prototype, "_uniqueFilter", 2);
-i([
+s([
   c()
 ], a.prototype, "_selectedLanguage", 2);
-a = i([
+a = s([
   m("umbraco-language-picker")
 ], a);
 export {
