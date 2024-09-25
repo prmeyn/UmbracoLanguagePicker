@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Web.Website" Version="14.2.0" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
-	  <PackageReference Include="UmbracoKeyValuePropertyEditor" Version="14.1.0" />
+	  <PackageReference Include="UmbracoKeyValuePropertyEditor" Version="14.3.0" />
   </ItemGroup>
 
   <ItemGroup>

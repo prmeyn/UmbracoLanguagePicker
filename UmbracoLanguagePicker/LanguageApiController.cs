@@ -25,7 +25,7 @@ namespace UmbracoLanguagePicker
         }
         
         [HttpGet("get-key-value-list")]
-        public override IOrderedEnumerable<KeyValuePair<string, string>> GetKeyValueList(string parentNodeIdOrGuid, string nodeIdOrGuid, string propertyAlias, int uniqueFilter = 0, int allowNull = 0)
+        public override IOrderedEnumerable<KeyValuePair<string, string>> GetKeyValueList(string parentNodeIdOrGuid, string nodeIdOrGuid, string propertyAlias, bool uniqueFilter, bool allowNull)
         {
             try
             {
@@ -55,10 +55,10 @@ namespace UmbracoLanguagePicker
                     }
                     usedUpLanguageCodes = GetValuesOfChildrensProperty(parentNode, propertyAlias, currentNode?.Id).ToArray();
                 }
-                catch { uniqueFilter = 0; }
+                catch { uniqueFilter = false; }
                 
                 LanguageDTO[] languageList = null;
-                if (uniqueFilter == 1)
+                if (uniqueFilter)
                 {
                     languageList = (new LanguageApiWrapper(_localizationService)).AllLanguages.Where(c => !usedUpLanguageCodes.Contains(c.ISOCode.ToLowerInvariant())).ToArray();
                 }
@@ -66,7 +66,7 @@ namespace UmbracoLanguagePicker
                 {
                     languageList = (new LanguageApiWrapper(_localizationService)).AllLanguages.ToArray();
                 }
-                if (allowNull == 1)
+                if (allowNull)
                 {
                     languageList = languageList.Prepend(new LanguageDTO { ISOCode = "", EnglishName = "" }).ToArray();
                 }
