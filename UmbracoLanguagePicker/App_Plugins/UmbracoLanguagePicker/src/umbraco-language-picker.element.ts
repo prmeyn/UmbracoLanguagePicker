@@ -10,6 +10,7 @@ import { UMB_AUTH_CONTEXT, UmbAuthContext } from "@umbraco-cms/backoffice/auth";
 import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
 import { UmbLanguageCollectionRepository } from "@umbraco-cms/backoffice/language";
 import { UUISelectEvent } from "@umbraco-cms/backoffice/external/uui";
+import type { UmbMenuStructureWorkspaceContext, UmbStructureItemModel } from '@umbraco-cms/backoffice/menu';
 
 @customElement('umbraco-language-picker')
 export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitElement) implements UmbPropertyEditorUiElement
@@ -65,16 +66,19 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
   private _selectedLanguage?: string;
   // @ts-ignore
   private languageCollectionRepository = new UmbLanguageCollectionRepository(this)
-  // @ts-ignore
-  private workspaceContext: UmbWorkspaceContext;
+
   // @ts-ignore
   private authorizationContext: UmbAuthContext;
   // @ts-ignore
   private myToken: Promise<string>;
+
+  #workspaceContext?: any;
+  #structureContext?: UmbMenuStructureWorkspaceContext;
+
   constructor() {
     super();
     this.consumeContext(UMB_WORKSPACE_CONTEXT, (context) => {
-      this.workspaceContext = context;
+      this.#workspaceContext = context;
         //grab the node id (guid) from the context
         // @ts-ignore
       this.contentNodeId = context.getUnique();
@@ -92,14 +96,45 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       })
     })
     this.consumeContext('UmbMenuStructureWorkspaceContext', (instance: any) => {
-      const getParentArray = instance.structure.source._value;
-      const parentIndex = getParentArray.length - 2; // weird hack
-      const selectParent = getParentArray[parentIndex];
-      this.contentParentNode = selectParent ? selectParent.unique : null;
-      this.observe(instance.structure, (value) => {
-        console.log(value)
-      });
+      this.#structureContext = instance as UmbMenuStructureWorkspaceContext;
+			this.#observeStructure();
     });
+  }
+  
+  #observeStructure() {
+		if (!this.#structureContext || !this.#workspaceContext) return;
+		const isNew = this.#workspaceContext.getIsNew();
+
+		this.observe(
+			this.#structureContext.structure,
+			(value) => {
+				// TODO: get the type from the context
+				const structure = value as Array<UmbStructureItemModel>;
+        if(isNew)
+        {
+          if(this.isDocumentRoot())
+          {
+            // @ts-ignore
+            this.contentParentNode = null;
+          }
+          else
+          {
+            // @ts-ignore
+            this.contentParentNode = structure[structure.length - 1]?.unique;    
+          }
+        }
+        else
+        {
+          // @ts-ignore
+          this.contentParentNode = structure[structure.length - 2]?.unique;  
+        }
+			},
+			'menuStructureObserver',
+		);
+	}
+
+  isDocumentRoot() : boolean {
+    return location.href.split("/").indexOf('document-root') > -1;
   }
   
   async firstUpdated(changed: any) {

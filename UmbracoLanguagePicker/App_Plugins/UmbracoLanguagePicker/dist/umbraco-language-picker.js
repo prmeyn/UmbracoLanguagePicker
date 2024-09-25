@@ -1,40 +1,47 @@
-import { LitElement as g, html as h, css as d, property as i, state as c, customElement as m } from "@umbraco-cms/backoffice/external/lit";
-import { UmbPropertyValueChangeEvent as y } from "@umbraco-cms/backoffice/property-editor";
-import { UmbElementMixin as E } from "@umbraco-cms/backoffice/element-api";
-import { UMB_WORKSPACE_CONTEXT as f } from "@umbraco-cms/backoffice/workspace";
-import { UMB_AUTH_CONTEXT as L } from "@umbraco-cms/backoffice/auth";
-import { UMB_PROPERTY_CONTEXT as N } from "@umbraco-cms/backoffice/property";
-import { UmbLanguageCollectionRepository as _ } from "@umbraco-cms/backoffice/language";
-var v = Object.defineProperty, C = Object.getOwnPropertyDescriptor, s = (e, t, n, r) => {
-  for (var o = r > 1 ? void 0 : r ? C(t, n) : t, l = e.length - 1, u; l >= 0; l--)
-    (u = e[l]) && (o = (r ? u(t, n, o) : u(o)) || o);
-  return r && o && v(t, n, o), o;
-};
-let a = class extends E(g) {
+import { LitElement as E, html as d, css as w, property as n, state as m, customElement as C } from "@umbraco-cms/backoffice/external/lit";
+import { UmbPropertyValueChangeEvent as L } from "@umbraco-cms/backoffice/property-editor";
+import { UmbElementMixin as k } from "@umbraco-cms/backoffice/element-api";
+import { UMB_WORKSPACE_CONTEXT as O } from "@umbraco-cms/backoffice/workspace";
+import { UMB_AUTH_CONTEXT as T } from "@umbraco-cms/backoffice/auth";
+import { UMB_PROPERTY_CONTEXT as P } from "@umbraco-cms/backoffice/property";
+import { UmbLanguageCollectionRepository as $ } from "@umbraco-cms/backoffice/language";
+var b = Object.defineProperty, x = Object.getOwnPropertyDescriptor, s = (e, t, a, o) => {
+  for (var r = o > 1 ? void 0 : o ? x(t, a) : t, l = e.length - 1, u; l >= 0; l--)
+    (u = e[l]) && (r = (o ? u(t, a, r) : u(r)) || r);
+  return o && r && b(t, a, r), r;
+}, f = (e, t, a) => {
+  if (!t.has(e))
+    throw TypeError("Cannot " + a);
+}, g = (e, t, a) => (f(e, t, "read from private field"), a ? a.call(e) : t.get(e)), y = (e, t, a) => {
+  if (t.has(e))
+    throw TypeError("Cannot add the same private member more than once");
+  t instanceof WeakSet ? t.add(e) : t.set(e, a);
+}, _ = (e, t, a, o) => (f(e, t, "write to private field"), o ? o.call(e, a) : t.set(e, a), a), A = (e, t, a) => (f(e, t, "access private method"), a), h, c, v, N;
+let i = class extends k(E) {
   constructor() {
-    super(), this.languageList = [], this.currentAlias = "", this.contentParentNode = "", this.languageError = !1, this.mappedLanguageList = {}, this._lowerCaseNone = "", this.isEditing = !1, this.languageCollectionRepository = new _(this), this.consumeContext(f, (e) => {
-      this.workspaceContext = e, this.contentNodeId = e.getUnique();
-    }), this.consumeContext(L, (e) => {
+    super(), y(this, v), this.languageList = [], this.currentAlias = "", this.contentParentNode = "", this.languageError = !1, this.mappedLanguageList = {}, this._lowerCaseNone = "", this.isEditing = !1, this.languageCollectionRepository = new $(this), y(this, h, void 0), y(this, c, void 0), this.consumeContext(O, (e) => {
+      _(this, h, e), this.contentNodeId = e.getUnique();
+    }), this.consumeContext(T, (e) => {
       this.authorizationContext = e, this.myAuthToken = e.getLatestToken();
-    }), this.consumeContext(N, (e) => {
+    }), this.consumeContext(P, (e) => {
       this.observe(e.alias, async (t) => {
         this.currentAlias = t;
       });
     }), this.consumeContext("UmbMenuStructureWorkspaceContext", (e) => {
-      const t = e.structure.source._value, n = t.length - 2, r = t[n];
-      this.contentParentNode = r ? r.unique : null, this.observe(e.structure, (o) => {
-        console.log(o);
-      });
+      _(this, c, e), A(this, v, N).call(this);
     });
   }
   set config(e) {
     this._allowNull = e.getValueByAlias("allowNull"), this._uniqueFilter = e.getValueByAlias("uniqueFilter");
   }
+  isDocumentRoot() {
+    return location.href.split("/").indexOf("document-root") > -1;
+  }
   async firstUpdated(e) {
     super.firstUpdated(e);
     const { data: t } = await this.languageCollectionRepository.requestCollection({});
-    this.mappedLanguageList[this._lowerCaseNone] = "NONE", t == null || t.items.forEach((n) => {
-      this.mappedLanguageList[n.unique.toLowerCase()] = n.name;
+    this.mappedLanguageList[this._lowerCaseNone] = "NONE", t == null || t.items.forEach((a) => {
+      this.mappedLanguageList[a.unique.toLowerCase()] = a.name;
     }), this.displayValue = this.mappedLanguageList[this.value || ""], this.getLanguages();
   }
   async getLanguages() {
@@ -49,18 +56,35 @@ let a = class extends E(g) {
   }
   handleSelectChange(e) {
     const t = e.target.value;
-    this.value = t, this._selectedLanguage = t, this.dispatchEvent(new y());
+    this.value = t, this._selectedLanguage = t, this.dispatchEvent(new L());
   }
   render() {
-    return h`
-      ${this.isEditing ? h`<uui-select .value=${this.value} label="select language" .options=${this.languageList} placeholder=${this._allowNull ? "NONE" : "Select an option"} @change=${this.handleSelectChange}></uui-select>` : h`<span class="editing-text">${this.displayValue ? this.displayValue : "Select language"}</span>
+    return d`
+      ${this.isEditing ? d`<uui-select .value=${this.value} label="select language" .options=${this.languageList} placeholder=${this._allowNull ? "NONE" : "Select an option"} @change=${this.handleSelectChange}></uui-select>` : d`<span class="editing-text">${this.displayValue ? this.displayValue : "Select language"}</span>
           <uui-button look="secondary" color="default" class="data-api-picker-edit-label" role="button" @click=${() => this.isEditing = !this.isEditing}>Edit</uui-button>`}
-        ${this.languageError ? h`<p>error when fetching languages</p>` : ""}
+        ${this.languageError ? d`<p>error when fetching languages</p>` : ""}
     `;
   }
 };
-a.styles = [
-  d`
+h = /* @__PURE__ */ new WeakMap();
+c = /* @__PURE__ */ new WeakMap();
+v = /* @__PURE__ */ new WeakSet();
+N = function() {
+  if (!g(this, c) || !g(this, h))
+    return;
+  const e = g(this, h).getIsNew();
+  this.observe(
+    g(this, c).structure,
+    (t) => {
+      var o, r;
+      const a = t;
+      e ? this.isDocumentRoot() ? this.contentParentNode = null : this.contentParentNode = (o = a[a.length - 1]) == null ? void 0 : o.unique : this.contentParentNode = (r = a[a.length - 2]) == null ? void 0 : r.unique;
+    },
+    "menuStructureObserver"
+  );
+};
+i.styles = [
+  w`
       .data-api-picker-edit-label {
         font-size: 13px;
       }
@@ -74,54 +98,54 @@ a.styles = [
     `
 ];
 s([
-  i()
-], a.prototype, "value", 2);
+  n()
+], i.prototype, "value", 2);
 s([
-  i()
-], a.prototype, "displayValue", 2);
+  n()
+], i.prototype, "displayValue", 2);
 s([
-  i()
-], a.prototype, "languageList", 2);
+  n()
+], i.prototype, "languageList", 2);
 s([
-  i()
-], a.prototype, "contentNodeId", 2);
+  n()
+], i.prototype, "contentNodeId", 2);
 s([
-  i()
-], a.prototype, "myAuthToken", 2);
+  n()
+], i.prototype, "myAuthToken", 2);
 s([
-  i()
-], a.prototype, "currentAlias", 2);
+  n()
+], i.prototype, "currentAlias", 2);
 s([
-  i()
-], a.prototype, "contentParentNode", 2);
+  n()
+], i.prototype, "contentParentNode", 2);
 s([
-  i()
-], a.prototype, "languageError", 2);
+  n()
+], i.prototype, "languageError", 2);
 s([
-  i()
-], a.prototype, "mappedLanguageList", 2);
+  n()
+], i.prototype, "mappedLanguageList", 2);
 s([
-  i()
-], a.prototype, "_lowerCaseNone", 2);
+  n()
+], i.prototype, "_lowerCaseNone", 2);
 s([
-  i({ attribute: !1 })
-], a.prototype, "config", 1);
+  n({ attribute: !1 })
+], i.prototype, "config", 1);
 s([
-  c()
-], a.prototype, "isEditing", 2);
+  m()
+], i.prototype, "isEditing", 2);
 s([
-  c()
-], a.prototype, "_allowNull", 2);
+  m()
+], i.prototype, "_allowNull", 2);
 s([
-  c()
-], a.prototype, "_uniqueFilter", 2);
+  m()
+], i.prototype, "_uniqueFilter", 2);
 s([
-  c()
-], a.prototype, "_selectedLanguage", 2);
-a = s([
-  m("umbraco-language-picker")
-], a);
+  m()
+], i.prototype, "_selectedLanguage", 2);
+i = s([
+  C("umbraco-language-picker")
+], i);
 export {
-  a as default
+  i as default
 };
 //# sourceMappingURL=umbraco-language-picker.js.map
