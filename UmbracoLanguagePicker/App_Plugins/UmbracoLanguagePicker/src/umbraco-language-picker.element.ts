@@ -190,6 +190,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
           html`<span class="editing-text">${this.displayValue ? this.displayValue : "Select language"}</span>
           <uui-button look="secondary" color="default" class="data-api-picker-edit-label" role="button" @click=${() => this.isEditing = !this.isEditing}>
             <umb-localize key="umbracoLanguagePicker_edit">
+              Edit
             </umb-localize>
           </uui-button>`}
         ${this.languageError ?  html`<p>error when fetching languages</p>` : "" }
