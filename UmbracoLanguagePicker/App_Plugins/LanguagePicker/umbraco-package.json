@@ -1,13 +1,13 @@
 {
   "$schema": "../../umbraco-package-schema.json",
   "name": "UmbracoLanguagePicker",
-  "version": "14.7.0",
+  "version": "14.8.0",
   "extensions": [
     {
       "type": "propertyEditorUi",
       "alias": "UmbracoLanguagePicker",
       "name": "UmbracoLanguagePicker",
-      "js": "/App_Plugins/UmbracoLanguagePicker/dist/umbraco-language-picker.js",
+      "js": "/App_Plugins/LanguagePicker/dist/umbraco-language-picker.js",
       "elementName": "umbraco-language-picker",
       "meta": {
         "label": "UmbracoLanguagePicker",
@@ -49,7 +49,7 @@
       "meta": {
         "culture": "en-US"
       },
-      "js": "/App_Plugins/UmbracoLanguagePicker/Localization/en-us.js"
+      "js": "/App_Plugins/LanguagePicker/Localization/en-us.js"
     },
     {
       "type": "localization",
@@ -58,7 +58,7 @@
       "meta": {
         "culture": "da-DK"
       },
-      "js": "/App_Plugins/UmbracoLanguagePicker/Localization/da-dk.js"
+      "js": "/App_Plugins/LanguagePicker/Localization/da-dk.js"
     }
   ]
 }
