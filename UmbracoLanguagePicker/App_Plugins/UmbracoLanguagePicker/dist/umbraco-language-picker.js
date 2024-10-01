@@ -1,14 +1,14 @@
 import { LitElement as E, html as d, css as w, property as n, state as m, customElement as C } from "@umbraco-cms/backoffice/external/lit";
 import { UmbPropertyValueChangeEvent as L } from "@umbraco-cms/backoffice/property-editor";
 import { UmbElementMixin as k } from "@umbraco-cms/backoffice/element-api";
-import { UMB_WORKSPACE_CONTEXT as O } from "@umbraco-cms/backoffice/workspace";
-import { UMB_AUTH_CONTEXT as T } from "@umbraco-cms/backoffice/auth";
+import { UMB_WORKSPACE_CONTEXT as b } from "@umbraco-cms/backoffice/workspace";
+import { UMB_AUTH_CONTEXT as O } from "@umbraco-cms/backoffice/auth";
 import { UMB_PROPERTY_CONTEXT as P } from "@umbraco-cms/backoffice/property";
-import { UmbLanguageCollectionRepository as $ } from "@umbraco-cms/backoffice/language";
-var b = Object.defineProperty, x = Object.getOwnPropertyDescriptor, s = (e, t, a, o) => {
+import { UmbLanguageCollectionRepository as T } from "@umbraco-cms/backoffice/language";
+var $ = Object.defineProperty, x = Object.getOwnPropertyDescriptor, s = (e, t, a, o) => {
   for (var r = o > 1 ? void 0 : o ? x(t, a) : t, l = e.length - 1, u; l >= 0; l--)
     (u = e[l]) && (r = (o ? u(t, a, r) : u(r)) || r);
-  return o && r && b(t, a, r), r;
+  return o && r && $(t, a, r), r;
 }, f = (e, t, a) => {
   if (!t.has(e))
     throw TypeError("Cannot " + a);
@@ -19,9 +19,9 @@ var b = Object.defineProperty, x = Object.getOwnPropertyDescriptor, s = (e, t, a
 }, _ = (e, t, a, o) => (f(e, t, "write to private field"), o ? o.call(e, a) : t.set(e, a), a), A = (e, t, a) => (f(e, t, "access private method"), a), h, c, v, N;
 let i = class extends k(E) {
   constructor() {
-    super(), y(this, v), this.languageList = [], this.currentAlias = "", this.contentParentNode = "", this.languageError = !1, this.mappedLanguageList = {}, this._lowerCaseNone = "", this.isEditing = !1, this.languageCollectionRepository = new $(this), y(this, h, void 0), y(this, c, void 0), this.consumeContext(O, (e) => {
+    super(), y(this, v), this.languageList = [], this.currentAlias = "", this.contentParentNode = "", this.languageError = !1, this.mappedLanguageList = {}, this._lowerCaseNone = "", this.isEditing = !1, this.languageCollectionRepository = new T(this), y(this, h, void 0), y(this, c, void 0), this.consumeContext(b, (e) => {
       _(this, h, e), this.contentNodeId = e.getUnique();
-    }), this.consumeContext(T, (e) => {
+    }), this.consumeContext(O, (e) => {
       this.authorizationContext = e, this.myAuthToken = e.getLatestToken();
     }), this.consumeContext(P, (e) => {
       this.observe(e.alias, async (t) => {
@@ -61,7 +61,11 @@ let i = class extends k(E) {
   render() {
     return d`
       ${this.isEditing ? d`<uui-select .value=${this.value} label="select language" .options=${this.languageList} placeholder=${this._allowNull ? "NONE" : "Select an option"} @change=${this.handleSelectChange}></uui-select>` : d`<span class="editing-text">${this.displayValue ? this.displayValue : "Select language"}</span>
-          <uui-button look="secondary" color="default" class="data-api-picker-edit-label" role="button" @click=${() => this.isEditing = !this.isEditing}>Edit</uui-button>`}
+          <uui-button look="secondary" color="default" class="data-api-picker-edit-label" role="button" @click=${() => this.isEditing = !this.isEditing}>
+            <umb-localize key="umbracoLanguagePicker_edit">
+              Edit
+            </umb-localize>
+          </uui-button>`}
         ${this.languageError ? d`<p>error when fetching languages</p>` : ""}
     `;
   }
