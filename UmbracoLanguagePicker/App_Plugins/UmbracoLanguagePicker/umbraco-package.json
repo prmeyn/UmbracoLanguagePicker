@@ -41,6 +41,24 @@
           ]
         }
       }
+    },
+    {
+      "type": "localization",
+      "alias": "UmbracoLanguagePicker.Localize.EnUs",
+      "name": "English",
+      "meta": {
+        "culture": "en-US"
+      },
+      "js": "/App_Plugins/UmbracoLanguagePicker/Localization/en-us.js"
+    },
+    {
+      "type": "localization",
+      "alias": "UmbracoLanguagePicker.Localize.DaDk",
+      "name": "Danish",
+      "meta": {
+        "culture": "da-DK"
+      },
+      "js": "/App_Plugins/UmbracoLanguagePicker/Localization/da-dk.js"
     }
   ]
 }
