@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="App_Plugins\UmbracoLanguagePicker\**">
+    <Content Include="App_Plugins\LanguagePicker\**">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </Content>
