@@ -1,7 +1,7 @@
 {
   "$schema": "../../umbraco-package-schema.json",
   "name": "UmbracoLanguagePicker",
-  "version": "14.8.0",
+  "version": "14.9.0",
   "extensions": [
     {
       "type": "propertyEditorUi",
@@ -50,6 +50,15 @@
         "culture": "en-US"
       },
       "js": "/App_Plugins/LanguagePicker/Localization/en-us.js"
+    },
+    {
+      "type": "localization",
+      "alias": "UmbracoLanguagePicker.Localize.En",
+      "name": "English",
+      "meta": {
+        "culture": "en"
+      },
+      "js": "/App_Plugins/LanguagePicker/Localization/en.js"
     },
     {
       "type": "localization",

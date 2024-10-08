@@ -1,5 +1,7 @@
 export default {
     umbracoLanguagePicker: {
-        edit: "Rediger"   
+        edit: "Rediger",
+        selectLanguage: "Vælg sprog",
+        selectAnOption: "Vælg en mulighed"
     }
 }
