@@ -138,18 +138,17 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
 
   async firstUpdated(changed: any) {
     super.firstUpdated(changed)
+    await this.getBackofficeLanguages()
     await this.getLanguages()
   }
 
-  async update(changedProp: any) {
+  private async getBackofficeLanguages() {
     const {data} = await this.languageCollectionRepository.requestCollection({})
     this.mappedLanguageList[this._lowerCaseNone] = "NONE";
     data?.items.forEach(element => {
       this.mappedLanguageList[element.unique.toLowerCase()] = element.name
     })
     this.displayValue = this.mappedLanguageList[this.value || ""];
-    // super.update() is called lastly by intention to avoid an infinite loop
-    super.update(changedProp)
   }
 
   private async getLanguages() {
@@ -189,12 +188,12 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
     return html`
       ${this.isEditing ?
         html`
-            <uui-select .value=${this.value} label="select language" .options=${this.languageList} placeholder=${this._allowNull ? "NONE" : html`<umb-localize key="umbracoLanguagePicker_selectAnOption">Select an option</umb-localize>`} @change=${this.handleSelectChange}>
+            <uui-select .value=${this.value} label="select language" .options=${this.languageList} .placeholder=${this._allowNull ? "NONE" : html`<umb-localize key="umbracoLanguagePicker_selectAnOption">Select an option</umb-localize>`} @change=${this.handleSelectChange}>
             </uui-select>`
         :
         html`
             <span class="editing-text">
-              ${this.displayValue ? this.displayValue : html`<umb-localize key="umbracoLanguagePicker_selectLanguage">Select Language</umb-localize>`}
+              ${this.value ? this.displayValue : html`<umb-localize key="umbracoLanguagePicker_selectLanguage">Select Language</umb-localize>`}
             </span>
           <uui-button look="secondary" color="default" class="data-api-picker-edit-label" role="button" @click=${() => this.isEditing = !this.isEditing}>
             <umb-localize key="umbracoLanguagePicker_edit">
