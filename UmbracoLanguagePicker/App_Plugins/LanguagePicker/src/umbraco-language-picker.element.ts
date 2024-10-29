@@ -11,6 +11,7 @@ import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
 import { UmbLanguageCollectionRepository } from "@umbraco-cms/backoffice/language";
 import { UUISelectEvent } from "@umbraco-cms/backoffice/external/uui";
 import type { UmbMenuStructureWorkspaceContext, UmbStructureItemModel } from '@umbraco-cms/backoffice/menu';
+import {CSSResult} from "lit";
 
 @customElement('umbraco-language-picker')
 export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitElement) implements UmbPropertyEditorUiElement
@@ -23,7 +24,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
   public displayValue: string | undefined;
 
   @property()
-  public languageList: object[] = []
+  public languageList: object[] = [];
 
   @property()
   public contentNodeId: string | undefined;
@@ -32,16 +33,16 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
   public myAuthToken: Promise<string> | undefined;
 
   @property()
-  public currentAlias = ""
+  public currentAlias: string = "";
 
   @property()
-  public contentParentNode = ""
+  public contentParentNode: string = "";
 
   @property()
   public languageError: boolean = false;
 
   @property()
-  public mappedLanguageList: any = {}
+  public mappedLanguageList: Record<string, string> = {};
 
   @property()
   private _lowerCaseNone: string = "";
@@ -53,24 +54,19 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
   }
 
   @state()
-  isEditing: boolean = false;
+  private _isEditing: boolean = false;
 
   @state()
   private _allowNull?: boolean;
 
   @state()
-  private _uniqueFilter?: boolean
-
-  @state()
-  // @ts-ignore
-  private _selectedLanguage?: string;
-  // @ts-ignore
-  private languageCollectionRepository = new UmbLanguageCollectionRepository(this)
+  private _uniqueFilter?: boolean;
 
   // @ts-ignore
-  private authorizationContext: UmbAuthContext;
+  private _languageCollectionRepository: UmbLanguageCollectionRepository = new UmbLanguageCollectionRepository(this)
+
   // @ts-ignore
-  private myToken: Promise<string>;
+  private _authorizationContext: UmbAuthContext;
 
   #workspaceContext?: any;
   #structureContext?: UmbMenuStructureWorkspaceContext;
@@ -84,7 +80,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       this.contentNodeId = context.getUnique();
     });
     this.consumeContext(UMB_AUTH_CONTEXT, (context) => {
-      this.authorizationContext = context;
+      this._authorizationContext = context;
       this.myAuthToken = context.getLatestToken();
     })
     // To get the alias of the UmbracoLanguagePicker property editor you need to use this
@@ -111,6 +107,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
           const structure = value as Array<UmbStructureItemModel>;
           if(isNew)
           {
+            this._isEditing = true
             if(this.isDocumentRoot())
             {
               // @ts-ignore
@@ -132,18 +129,18 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
     );
   }
 
-  isDocumentRoot() : boolean {
+  private isDocumentRoot() : boolean {
     return location.href.split("/").indexOf('document-root') > -1;
   }
 
-  async firstUpdated(changed: any) {
+  async firstUpdated(changed: any): Promise<void> {
     super.firstUpdated(changed)
     await this.getBackofficeLanguages()
     await this.getLanguages()
   }
 
-  private async getBackofficeLanguages() {
-    const {data} = await this.languageCollectionRepository.requestCollection({})
+  private async getBackofficeLanguages(): Promise<void> {
+    const {data} = await this._languageCollectionRepository.requestCollection({})
     this.mappedLanguageList[this._lowerCaseNone] = "NONE";
     data?.items.forEach(element => {
       this.mappedLanguageList[element.unique.toLowerCase()] = element.name
@@ -151,9 +148,9 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
     this.displayValue = this.mappedLanguageList[this.value || ""];
   }
 
-  private async getLanguages() {
+  private async getLanguages(): Promise<void> {
     try {
-      const promiseToken = await this.myAuthToken;
+      const promiseToken: string | undefined = await this.myAuthToken;
       const headers = {
         Authorization: `Bearer ${promiseToken}`
       };
@@ -176,35 +173,52 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
     }
   }
 
-  private handleSelectChange(e: UUISelectEvent) {
+  private handleSelectChange(e: UUISelectEvent): void {
     const langValue = e.target.value as string;
     this.value = langValue;
-    this._selectedLanguage = langValue
 
     this.dispatchEvent(new UmbPropertyValueChangeEvent());
   }
+  
+  private renderDropdown() {
+    return html`
+      <uui-select
+          .value=${this.value}
+          label="Select Language"
+          .options=${this.languageList}
+          .placeholder=${this.displayValue}
+          @change=${this.handleSelectChange}
+      ></uui-select>
+    `
+  }
+
+  private renderDisplayValue() {
+    return html`
+    <span class="editing-text">
+      ${this.displayValue ? this.displayValue : this.value}
+    </span>
+    <uui-button
+      look="secondary"
+      color="default"
+      class="data-api-picker-edit-label"
+      role="button"
+      @click=${() => (this._isEditing = !this._isEditing)}>
+      <umb-localize key="umbracoLanguagePicker_edit">Edit</umb-localize>
+    </uui-button>
+  `;
+  }
+
 
   render() {
     return html`
-      ${this.isEditing ?
-        html`
-            <uui-select .value=${this.value} label="select language" .options=${this.languageList} .placeholder=${this._allowNull ? "NONE" : html`<umb-localize key="umbracoLanguagePicker_selectAnOption">Select an option</umb-localize>`} @change=${this.handleSelectChange}>
-            </uui-select>`
-        :
-        html`
-            <span class="editing-text">
-              ${this.value ? this.displayValue : html`<umb-localize key="umbracoLanguagePicker_selectLanguage">Select Language</umb-localize>`}
-            </span>
-          <uui-button look="secondary" color="default" class="data-api-picker-edit-label" role="button" @click=${() => this.isEditing = !this.isEditing}>
-            <umb-localize key="umbracoLanguagePicker_edit">
-              Edit
-            </umb-localize>
-          </uui-button>`}
-      ${this.languageError ?  html`<p class="error-text">error when fetching languages</p>` : "" }
-    `;
+    ${this._isEditing
+        ? this.renderDropdown()
+        : this.renderDisplayValue()}
+    ${this.languageError ? html`<p class="error-text">Error fetching languages</p>` : ""}
+  `;
   }
 
-  static styles = [
+  static styles: CSSResult[] = [
     css`
       .data-api-picker-edit-label {
         font-size: 13px;
@@ -216,7 +230,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       .editing-text {
         padding-right: 12px;
       }
-
+      
       .error-text {
         color: var(--uui-color-danger);
       }
