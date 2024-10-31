@@ -141,7 +141,9 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
 
   private async getBackofficeLanguages(): Promise<void> {
     const {data} = await this._languageCollectionRepository.requestCollection({})
-    this.mappedLanguageList[this._lowerCaseNone] = "NONE";
+    if(this._allowNull) {
+      this.mappedLanguageList[this._lowerCaseNone] = "NONE";
+    }
     data?.items.forEach(element => {
       this.mappedLanguageList[element.unique.toLowerCase()] = element.name
     })
@@ -159,7 +161,12 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       const dataJson = await data.json()
       // Need to map it so the uui element can accept and display the data: https://uui.umbraco.com/?path=/docs/uui-select--docs
       const mappedData = dataJson.map((language:any) => {
-        return { name: this.mappedLanguageList[language.key] || "NONE", value: language.key || this._lowerCaseNone, selected: language.key === this.value}
+        if(this._allowNull) {
+          console.log("I am allowing null")
+          return { name: this.mappedLanguageList[language.key] || "NONE", value: language.key || this._lowerCaseNone, selected: language.key === this.value}
+        } else {
+          return { name: this.mappedLanguageList[language.key], value: language.key, selected: language.key === this.value}
+        }
       })
       const mappedValue = mappedData.find((element: any) => element.value === this.value)
       this.languageList = mappedData;
@@ -179,7 +186,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
 
     this.dispatchEvent(new UmbPropertyValueChangeEvent());
   }
-  
+
   private renderDropdown() {
     return html`
       <uui-select
@@ -194,28 +201,28 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
 
   private renderDisplayValue() {
     return html`
-    <span class="editing-text">
+      <span class="editing-text">
       ${this.displayValue ? this.displayValue : this.value}
     </span>
-    <uui-button
-      look="secondary"
-      color="default"
-      class="data-api-picker-edit-label"
-      role="button"
-      @click=${() => (this._isEditing = !this._isEditing)}>
-      <umb-localize key="umbracoLanguagePicker_edit">Edit</umb-localize>
-    </uui-button>
-  `;
+      <uui-button
+          look="secondary"
+          color="default"
+          class="data-api-picker-edit-label"
+          role="button"
+          @click=${() => (this._isEditing = !this._isEditing)}>
+        <umb-localize key="umbracoLanguagePicker_edit">Edit</umb-localize>
+      </uui-button>
+    `;
   }
 
 
   render() {
     return html`
-    ${this._isEditing
-        ? this.renderDropdown()
-        : this.renderDisplayValue()}
-    ${this.languageError ? html`<p class="error-text">Error fetching languages</p>` : ""}
-  `;
+      ${this._isEditing
+          ? this.renderDropdown()
+          : this.renderDisplayValue()}
+      ${this.languageError ? html`<p class="error-text">Error fetching languages</p>` : ""}
+    `;
   }
 
   static styles: CSSResult[] = [
@@ -230,7 +237,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       .editing-text {
         padding-right: 12px;
       }
-      
+
       .error-text {
         color: var(--uui-color-danger);
       }
