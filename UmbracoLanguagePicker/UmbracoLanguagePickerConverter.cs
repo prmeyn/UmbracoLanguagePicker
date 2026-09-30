@@ -6,13 +6,8 @@ namespace UmbracoLanguagePicker
 {
 	public sealed class UmbracoLanguagePickerConverter : IPropertyValueConverter
 	{
-		public bool IsConverter(IPublishedPropertyType propertyType) => propertyType.EditorAlias == "UmbracoLanguagePicker";
+		public bool IsConverter(IPublishedPropertyType propertyType) => propertyType.EditorUiAlias == "UmbracoLanguagePicker";
 		public object ConvertIntermediateToObject(IPublishedElement owner, IPublishedPropertyType propertyType, PropertyCacheLevel referenceCacheLevel, object inter, bool preview) => inter as string;
-
-		public object ConvertIntermediateToXPath(IPublishedElement owner, IPublishedPropertyType propertyType, PropertyCacheLevel referenceCacheLevel, object inter, bool preview)
-		{
-			throw new NotImplementedException();
-		}
 
 		public object ConvertSourceToIntermediate(IPublishedElement owner, IPublishedPropertyType propertyType, object source, bool preview) => source as string;
 

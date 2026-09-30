@@ -1,87 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Api.Management.Controllers;
 using Umbraco.Cms.Api.Management.Routing;
-using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Web.Common;
+using Umbraco.Cms.Core.Services.Navigation;
 using Umbraco.Extensions;
-using UmbracoKeyValuePropertyEditor;
 
 namespace UmbracoLanguagePicker
 {
-    [VersionedApiBackOfficeRoute("")]
+    [VersionedApiBackOfficeRoute("umbraco-language-picker")]
     [ApiExplorerSettings(GroupName = "UmbracoLanguagePicker")]
-    public sealed class LanguageApiController : KeyValueUmbracoPropertyEditorController
+    public sealed class LanguageApiController : ManagementApiControllerBase
     {
-        private readonly UmbracoHelper _umbracoHelper;
-        private readonly ILocalizationService _localizationService;
+        private readonly ILanguageService _languageService;
+        private readonly IDocumentNavigationQueryService _navigationQueryService;
+        private readonly IPublishedContentCache _publishedContentCache;
+        private readonly ILogger<LanguageApiController> _logger;
 
-        public LanguageApiController(UmbracoHelper umbracoHelper, ILocalizationService localizationService)
+        public LanguageApiController(ILanguageService languageService, IDocumentNavigationQueryService navigationQueryService, IPublishedContentCache publishedContentCache, ILogger<LanguageApiController> logger)
         {
-            _umbracoHelper = umbracoHelper;
-            _localizationService = localizationService;
+            _languageService = languageService;
+            _navigationQueryService = navigationQueryService;
+            _publishedContentCache = publishedContentCache;
+            _logger = logger;
         }
-        
-        [HttpGet("get-key-value-list")]
-        public override IOrderedEnumerable<KeyValuePair<string, string>> GetKeyValueList(string parentNodeIdOrGuid, string nodeIdOrGuid, string propertyAlias, bool uniqueFilter, bool allowNull)
+
+        [HttpGet("languages")]
+        public async Task<IEnumerable<KeyValuePair<string, string>>> GetLanguages(string parentNodeIdOrGuid, string nodeIdOrGuid, string propertyAlias, bool uniqueFilter, bool allowNull)
         {
             try
             {
                 string[] usedUpLanguageCodes = Array.Empty<string>();
-                try
-                {
-                    // Current node block
-                    IPublishedContent currentNode = null;
-                    if (int.TryParse(nodeIdOrGuid, out int nodeId) && nodeId > 0)
-                    {
-                        currentNode = _umbracoHelper.Content(nodeId);
-                    }
-                    else if (Guid.TryParse(nodeIdOrGuid, out Guid Key))
-                    {
-                        currentNode = _umbracoHelper.Content(Key);
-                    }
-                    
-                    // Parent node block
-                    IPublishedContent parentNode = null;
-                    if (int.TryParse(parentNodeIdOrGuid, out int parentNodeId) && parentNodeId > 0)
-                    {
-                        parentNode = _umbracoHelper.Content(parentNodeId);
-                    }
-                    else if (Guid.TryParse(parentNodeIdOrGuid, out Guid Key))
-                    {
-                        parentNode = _umbracoHelper.Content(Key);
-                    }
-                    usedUpLanguageCodes = GetValuesOfChildrensProperty(parentNode, propertyAlias, currentNode?.Id).ToArray();
-                }
-                catch { uniqueFilter = false; }
-                
-                LanguageDTO[] languageList = null;
                 if (uniqueFilter)
                 {
-                    languageList = (new LanguageApiWrapper(_localizationService)).AllLanguages.Where(c => !usedUpLanguageCodes.Contains(c.ISOCode.ToLowerInvariant())).ToArray();
+                    try
+                    {
+                        Guid? currentNodeKey = Guid.TryParse(nodeIdOrGuid, out Guid nodeKey) ? nodeKey : null;
+                        // No parent means the node is at the content root
+                        Guid? parentNodeKey = Guid.TryParse(parentNodeIdOrGuid, out Guid parentKey) ? parentKey : null;
+                        usedUpLanguageCodes = (await GetValuesOfSiblingsProperty(parentNodeKey, propertyAlias, currentNodeKey)).ToArray();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Could not read sibling values for property {PropertyAlias} (node {NodeIdOrGuid}, parent {ParentNodeIdOrGuid}); showing all languages instead of applying the unique filter", propertyAlias, nodeIdOrGuid, parentNodeIdOrGuid);
+                        uniqueFilter = false;
+                    }
                 }
-                else
+
+                IEnumerable<LanguageDTO> languageList = await new LanguageApiWrapper(_languageService).GetAllLanguagesAsync();
+                if (uniqueFilter)
                 {
-                    languageList = (new LanguageApiWrapper(_localizationService)).AllLanguages.ToArray();
+                    languageList = languageList.Where(c => !usedUpLanguageCodes.Contains(c.ISOCode.ToLowerInvariant()));
                 }
                 if (allowNull)
                 {
-                    languageList = languageList.Prepend(new LanguageDTO { ISOCode = "", EnglishName = "" }).ToArray();
+                    languageList = languageList.Prepend(new LanguageDTO { ISOCode = "", EnglishName = "" });
                 }
                 return languageList.ToDictionary(c => c.ISOCode.ToLowerInvariant(), c => "").OrderBy(v => v.Key);
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                _logger.LogError(ex, "Could not build the language list for property {PropertyAlias}", propertyAlias);
+                throw;
             }
         }
 
-        private IEnumerable<string> GetValuesOfChildrensProperty(IPublishedContent parentNode, string propertyAlias, int? currentNodeId)
+        // Values of the property on the node's published siblings, not counting the node itself
+        private async Task<IEnumerable<string>> GetValuesOfSiblingsProperty(Guid? parentNodeKey, string propertyAlias, Guid? currentNodeKey)
         {
-            var nodes = parentNode == null ? _umbracoHelper.ContentAtRoot() : parentNode.Children;
-            return nodes.Where(c => c.Id != currentNodeId).Select(c => c.Value<string>(propertyAlias)?.ToLowerInvariant());
+            IEnumerable<Guid> siblingKeys;
+            bool found = parentNodeKey.HasValue
+                ? _navigationQueryService.TryGetChildrenKeys(parentNodeKey.Value, out siblingKeys)
+                : _navigationQueryService.TryGetRootKeys(out siblingKeys);
+            if (!found)
+            {
+                return Array.Empty<string>();
+            }
+
+            var values = new List<string>();
+            foreach (Guid key in siblingKeys.Where(k => k != currentNodeKey))
+            {
+                // Returns null for nodes that aren't published
+                var sibling = await _publishedContentCache.GetByIdAsync(key, preview: false);
+                string value = sibling?.Value<string>(propertyAlias)?.ToLowerInvariant();
+                if (value != null)
+                {
+                    values.Add(value);
+                }
+            }
+            return values;
         }
     }
 }
