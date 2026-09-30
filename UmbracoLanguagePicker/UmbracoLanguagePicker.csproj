@@ -7,6 +7,7 @@
     <Title>UmbracoLanguagePicker</Title>
     <Description>An Umbraco 17 property editor for picking one of the site's configured languages, with an optional unique-per-sibling filter.</Description>
     <PackageTags>umbraco plugin package</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
