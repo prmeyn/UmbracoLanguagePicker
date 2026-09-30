@@ -1,6 +1,6 @@
 # UmbracoLanguagePicker
 
-A property editor for the Umbraco 14 backoffice. Editors use it to pick one of the languages set up under **Settings → Languages**. The value is saved as the language's ISO code (for example `da-dk`), so you can use it in templates to set a culture, filter content, or build language switchers.
+A property editor for the Umbraco 17 backoffice. Editors use it to pick one of the languages set up under **Settings → Languages**. The value is saved as the language's ISO code (for example `da-dk`), so you can use it in templates to set a culture, filter content, or build language switchers.
 
 ## Features
 
@@ -11,9 +11,15 @@ A property editor for the Umbraco 14 backoffice. Editors use it to pick one of t
 
 ## Requirements
 
-- Umbraco CMS 14 (the package is built against `Umbraco.Cms.Web.Website` 14.2.0)
-- .NET 8
-- [UmbracoKeyValuePropertyEditor](https://www.nuget.org/packages/UmbracoKeyValuePropertyEditor), which is installed automatically as a dependency
+- Umbraco CMS 17.7.0 or later 17.x
+- .NET 10
+
+| Umbraco version | Package version |
+| --- | --- |
+| 17 | 17.x |
+| 14 | 14.11.0 (no longer maintained; Umbraco 14 is end of life) |
+
+Upgrading from 14.x: 17.0.0 no longer depends on `UmbracoKeyValuePropertyEditor`, and its API endpoint moved to `/umbraco/management/api/v1/umbraco-language-picker/languages`. Stored values are unchanged.
 
 ## Installation
 
@@ -90,7 +96,7 @@ Project layout:
 | `App_Plugins/LanguagePicker/src/` | The property editor web component (TypeScript) |
 | `App_Plugins/LanguagePicker/umbraco-package.json` | Registers the property editor, its settings and translations |
 | `App_Plugins/LanguagePicker/Localization/` | Backoffice translations (`en`, `en-us`, `da-dk`) |
-| `LanguageApiController.cs` | Management API endpoint (`GET /umbraco/management/api/v1/get-key-value-list`) that returns the available language codes |
+| `LanguageApiController.cs` | Management API endpoint (`GET /umbraco/management/api/v1/umbraco-language-picker/languages`) that returns the available language codes |
 | `UmbracoLanguagePickerConverter.cs` | Property value converter, which returns the value as a `string` |
 | `build/UmbracoLanguagePicker.targets` | Copies the backoffice files into the consuming site on build |
 

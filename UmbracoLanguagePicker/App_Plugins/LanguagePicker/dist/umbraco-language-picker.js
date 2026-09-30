@@ -1,53 +1,57 @@
-import { LitElement as A, html as x, css as B, property as T, state as d, customElement as D } from "@umbraco-cms/backoffice/external/lit";
-import { UmbPropertyValueChangeEvent as I } from "@umbraco-cms/backoffice/property-editor";
-import { UmbElementMixin as R } from "@umbraco-cms/backoffice/element-api";
-import { UMB_WORKSPACE_CONTEXT as z } from "@umbraco-cms/backoffice/workspace";
-import { UMB_AUTH_CONTEXT as G } from "@umbraco-cms/backoffice/auth";
-import { UMB_PROPERTY_CONTEXT as X } from "@umbraco-cms/backoffice/property";
-import { UmbLanguageCollectionRepository as H } from "@umbraco-cms/backoffice/language";
-var K = Object.defineProperty, Y = Object.getOwnPropertyDescriptor, u = (t, e, i, r) => {
-  for (var s = r > 1 ? void 0 : r ? Y(e, i) : e, C = t.length - 1, f; C >= 0; C--)
-    (f = t[C]) && (s = (r ? f(e, i, s) : f(s)) || s);
-  return r && s && K(e, i, s), s;
-}, O = (t, e, i) => {
+import { LitElement as $, html as k, css as V, property as W, state as v, customElement as A } from "@umbraco-cms/backoffice/external/lit";
+import { UmbPropertyValueChangeEvent as B } from "@umbraco-cms/backoffice/property-editor";
+import { UmbElementMixin as F } from "@umbraco-cms/backoffice/element-api";
+import { UMB_WORKSPACE_CONTEXT as D } from "@umbraco-cms/backoffice/workspace";
+import { UMB_AUTH_CONTEXT as I } from "@umbraco-cms/backoffice/auth";
+import { UMB_PROPERTY_CONTEXT as R } from "@umbraco-cms/backoffice/property";
+import { UMB_PARENT_ENTITY_CONTEXT as z } from "@umbraco-cms/backoffice/entity";
+import { UmbLanguageCollectionRepository as X } from "@umbraco-cms/backoffice/language";
+var G = Object.defineProperty, Y = Object.getOwnPropertyDescriptor, u = (t, e, i, s) => {
+  for (var r = s > 1 ? void 0 : s ? Y(e, i) : e, h = t.length - 1, w; h >= 0; h--)
+    (w = t[h]) && (r = (s ? w(e, i, r) : w(r)) || r);
+  return s && r && G(e, i, r), r;
+}, U = (t, e, i) => {
   if (!e.has(t))
     throw TypeError("Cannot " + i);
-}, a = (t, e, i) => (O(t, e, "read from private field"), i ? i.call(t) : e.get(t)), n = (t, e, i) => {
+}, a = (t, e, i) => (U(t, e, "read from private field"), i ? i.call(t) : e.get(t)), n = (t, e, i) => {
   if (e.has(t))
     throw TypeError("Cannot add the same private member more than once");
   e instanceof WeakSet ? e.add(t) : e.set(t, i);
-}, h = (t, e, i, r) => (O(t, e, "write to private field"), r ? r.call(t, i) : e.set(t, i), i), J = (t, e, i, r) => ({
-  set _(s) {
-    h(t, e, s, i);
+}, c = (t, e, i, s) => (U(t, e, "write to private field"), s ? s.call(t, i) : e.set(t, i), i), H = (t, e, i, s) => ({
+  set _(r) {
+    c(t, e, r, i);
   },
   get _() {
-    return a(t, e, r);
+    return a(t, e, s);
   }
-}), l = (t, e, i) => (O(t, e, "access private method"), i), g, w, m, y, _, c, p, N, W, L, b, S, V, E, U, v, q;
-const Q = "NONE";
-let o = class extends R(A) {
+}), o = (t, e, i) => (U(t, e, "access private method"), i), g, L, E, y, f, p, _, P, b, q, M, N, T, d, m;
+const K = "NONE";
+let l = class extends F($) {
   constructor() {
-    super(), n(this, N), n(this, L), n(this, S), n(this, E), n(this, v), this._isEditing = !1, this._languageList = [], this._languageError = !1, n(this, g, void 0), n(this, w, void 0), n(this, m, void 0), n(this, y, void 0), n(this, _, void 0), n(this, c, void 0), n(this, p, 0), this.consumeContext(z, (t) => {
-      h(this, g, t), h(this, m, a(this, g).getUnique()), l(this, N, W).call(this);
-    }), this.consumeContext(X, (t) => {
-      this.observe(t.alias, (e) => {
-        h(this, y, e), l(this, v, q).call(this);
+    super(), n(this, P), n(this, q), n(this, N), n(this, d), this._isEditing = !1, this._languageList = [], this._languageError = !1, n(this, g, void 0), n(this, L, !1), n(this, E, void 0), n(this, y, void 0), n(this, f, void 0), n(this, p, void 0), n(this, _, 0), this.consumeContext(D, (t) => {
+      var e, i;
+      t && (c(this, g, t), c(this, E, a(this, g).getUnique()), (i = (e = a(this, g)).getIsNew) != null && i.call(e) && (this._isEditing = !0), o(this, d, m).call(this));
+    }), this.consumeContext(R, (t) => {
+      t && this.observe(t.alias, (e) => {
+        c(this, y, e), o(this, d, m).call(this);
       });
-    }), this.consumeContext("UmbMenuStructureWorkspaceContext", (t) => {
-      h(this, w, t), l(this, N, W).call(this);
+    }), this.consumeContext(z, (t) => {
+      c(this, L, !!t), t && this.observe(t.parent, (e) => {
+        e && o(this, P, b).call(this, e.unique);
+      }, "parentObserver");
     });
   }
   set config(t) {
     this._allowNull = t.getValueByAlias("allowNull"), this._uniqueFilter = t.getValueByAlias("uniqueFilter");
   }
   firstUpdated(t) {
-    super.firstUpdated(t), l(this, v, q).call(this);
+    super.firstUpdated(t), o(this, d, m).call(this);
   }
   async handleSelectChange(t) {
-    this.value = t.target.value, this.dispatchEvent(new I()), a(this, c) && (this._displayValue = l(this, E, U).call(this, await a(this, c), this.value));
+    this.value = t.target.value, this.dispatchEvent(new B()), a(this, p) && (this._displayValue = o(this, N, T).call(this, await a(this, p), this.value));
   }
   renderDropdown() {
-    return x`
+    return k`
       <uui-select
           .value=${this.value ?? ""}
           label="Select Language"
@@ -58,7 +62,7 @@ let o = class extends R(A) {
     `;
   }
   renderDisplayValue() {
-    return x`
+    return k`
       <span class="editing-text">
       ${this._displayValue ? this._displayValue : this.value}
     </span>
@@ -73,82 +77,74 @@ let o = class extends R(A) {
     `;
   }
   render() {
-    return x`
+    return k`
       ${this._isEditing ? this.renderDropdown() : this.renderDisplayValue()}
-      ${this._languageError ? x`<p class="error-text">Error fetching languages</p>` : ""}
+      ${this._languageError ? k`<p class="error-text">Error fetching languages</p>` : ""}
     `;
   }
 };
 g = /* @__PURE__ */ new WeakMap();
-w = /* @__PURE__ */ new WeakMap();
-m = /* @__PURE__ */ new WeakMap();
+L = /* @__PURE__ */ new WeakMap();
+E = /* @__PURE__ */ new WeakMap();
 y = /* @__PURE__ */ new WeakMap();
-_ = /* @__PURE__ */ new WeakMap();
-c = /* @__PURE__ */ new WeakMap();
+f = /* @__PURE__ */ new WeakMap();
 p = /* @__PURE__ */ new WeakMap();
-N = /* @__PURE__ */ new WeakSet();
-W = function() {
-  var e;
-  const t = a(this, g);
-  t && ((e = t.getIsNew) != null && e.call(t) ? (this._isEditing = !0, t.parentUnique && this.observe(t.parentUnique, (i) => l(this, L, b).call(this, i), "parentObserver")) : a(this, w) && this.observe(
-    a(this, w).structure,
-    (i) => {
-      i.length >= 2 && l(this, L, b).call(this, i[i.length - 2].unique);
-    },
-    "parentObserver"
-  ));
-};
-L = /* @__PURE__ */ new WeakSet();
+_ = /* @__PURE__ */ new WeakMap();
+P = /* @__PURE__ */ new WeakSet();
 b = function(t) {
-  t === void 0 || t === a(this, _) || (h(this, _, t), l(this, v, q).call(this));
+  t === void 0 || t === a(this, f) || (c(this, f, t), o(this, d, m).call(this));
 };
-S = /* @__PURE__ */ new WeakSet();
-V = async function() {
-  const { data: t } = await new H(this).requestCollection({}), e = {};
+q = /* @__PURE__ */ new WeakSet();
+M = async function() {
+  const { data: t } = await new X(this).requestCollection({}), e = {};
   return t == null || t.items.forEach((i) => {
     e[i.unique.toLowerCase()] = i.name;
   }), e;
 };
-E = /* @__PURE__ */ new WeakSet();
-U = function(t, e) {
-  return e ? t[e] ?? e : this._allowNull ? Q : "";
+N = /* @__PURE__ */ new WeakSet();
+T = function(t, e) {
+  return e ? t[e] ?? e : this._allowNull ? K : "";
 };
-v = /* @__PURE__ */ new WeakSet();
-q = async function() {
-  const t = a(this, g), e = !!(t != null && t.parentUnique) && a(this, _) === void 0, i = !!t && (!a(this, m) || e);
-  if (this._uniqueFilter && (!a(this, y) || i) || !this._uniqueFilter && a(this, p) > 0)
+d = /* @__PURE__ */ new WeakSet();
+m = async function() {
+  const t = !!a(this, g) && !a(this, E), e = a(this, L) && a(this, f) === void 0;
+  if (this._uniqueFilter && (!a(this, y) || t || e) || !this._uniqueFilter && a(this, _) > 0)
     return;
-  const r = ++J(this, p)._;
+  const i = ++H(this, _)._;
   try {
-    a(this, c) ?? h(this, c, l(this, S, V).call(this));
-    const s = await a(this, c), f = await (await this.getContext(G)).getLatestToken(), $ = new URLSearchParams({
-      parentNodeIdOrGuid: a(this, _) ?? "",
-      nodeIdOrGuid: a(this, m) ?? "",
+    a(this, p) ?? c(this, p, o(this, q, M).call(this));
+    const s = await a(this, p), r = await this.getContext(I);
+    if (!r)
+      throw new Error("The auth context is not available");
+    const h = r.getOpenApiConfiguration(), w = new URLSearchParams({
+      parentNodeIdOrGuid: a(this, f) ?? "",
+      nodeIdOrGuid: a(this, E) ?? "",
       propertyAlias: a(this, y) ?? "",
       uniqueFilter: String(!!this._uniqueFilter),
       allowNull: String(!!this._allowNull)
-    }), k = await fetch(`/umbraco/management/api/v1/get-key-value-list?${$}`, {
-      headers: { Authorization: `Bearer ${f}` }
+    }), C = await fetch(`${h.base ?? ""}/umbraco/management/api/v1/umbraco-language-picker/languages?${w}`, {
+      credentials: h.credentials,
+      headers: { Authorization: `Bearer ${await h.token()}` }
     });
-    if (!k.ok)
-      throw new Error(`Fetching languages failed: ${k.status} ${k.statusText}`);
-    const F = await k.json();
-    if (r !== a(this, p))
+    if (!C.ok)
+      throw new Error(`Fetching languages failed: ${C.status} ${C.statusText}`);
+    const S = await C.json();
+    if (i !== a(this, _))
       return;
-    const M = this.value ?? "";
-    this._languageList = F.map(({ key: P }) => ({
-      name: l(this, E, U).call(this, s, P),
-      value: P,
-      selected: P === M
-    })), this._displayValue = l(this, E, U).call(this, s, M), this._languageError = !1;
+    const x = this.value ?? "";
+    this._languageList = S.map(({ key: O }) => ({
+      name: o(this, N, T).call(this, s, O),
+      value: O,
+      selected: O === x
+    })), this._displayValue = o(this, N, T).call(this, s, x), this._languageError = !1;
   } catch (s) {
-    if (r !== a(this, p))
+    if (i !== a(this, _))
       return;
     this._languageError = !0, console.error(s);
   }
 };
-o.styles = [
-  B`
+l.styles = [
+  V`
       .data-api-picker-edit-label {
         font-size: 13px;
       }
@@ -166,33 +162,33 @@ o.styles = [
     `
 ];
 u([
-  T()
-], o.prototype, "value", 2);
+  W()
+], l.prototype, "value", 2);
 u([
-  T({ attribute: !1 })
-], o.prototype, "config", 1);
+  W({ attribute: !1 })
+], l.prototype, "config", 1);
 u([
-  d()
-], o.prototype, "_isEditing", 2);
+  v()
+], l.prototype, "_isEditing", 2);
 u([
-  d()
-], o.prototype, "_allowNull", 2);
+  v()
+], l.prototype, "_allowNull", 2);
 u([
-  d()
-], o.prototype, "_uniqueFilter", 2);
+  v()
+], l.prototype, "_uniqueFilter", 2);
 u([
-  d()
-], o.prototype, "_displayValue", 2);
+  v()
+], l.prototype, "_displayValue", 2);
 u([
-  d()
-], o.prototype, "_languageList", 2);
+  v()
+], l.prototype, "_languageList", 2);
 u([
-  d()
-], o.prototype, "_languageError", 2);
-o = u([
-  D("umbraco-language-picker")
-], o);
+  v()
+], l.prototype, "_languageError", 2);
+l = u([
+  A("umbraco-language-picker")
+], l);
 export {
-  o as default
+  l as default
 };
 //# sourceMappingURL=umbraco-language-picker.js.map

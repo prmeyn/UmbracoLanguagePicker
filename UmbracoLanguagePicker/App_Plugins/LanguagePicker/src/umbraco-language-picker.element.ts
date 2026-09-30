@@ -1,25 +1,22 @@
 import { LitElement, html, css, customElement, property, state } from "@umbraco-cms/backoffice/external/lit";
 import { UmbPropertyValueChangeEvent } from "@umbraco-cms/backoffice/property-editor";
 // Needed for language picker config values 'allowNull' and 'uniqueFilter'
-import { type UmbPropertyEditorConfigCollection } from "@umbraco-cms/backoffice/property-editor";
-import type { UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/extension-registry";
+import type { UmbPropertyEditorConfigCollection, UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/property-editor";
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
 import { UMB_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/workspace";
 import { UMB_AUTH_CONTEXT } from "@umbraco-cms/backoffice/auth";
 import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
+import { UMB_PARENT_ENTITY_CONTEXT } from '@umbraco-cms/backoffice/entity';
 import { UmbLanguageCollectionRepository } from "@umbraco-cms/backoffice/language";
 import type { UUISelectEvent } from "@umbraco-cms/backoffice/external/uui";
-import type { UmbMenuStructureWorkspaceContext } from '@umbraco-cms/backoffice/menu';
-import type { Observable } from "@umbraco-cms/backoffice/external/rxjs";
-import type { CSSResult } from "lit";
+import type { CSSResult } from "@umbraco-cms/backoffice/external/lit";
 
 const NONE_LABEL = "NONE";
 
-// The parts of the document workspace context this editor uses. Other workspaces may not have all of them.
+// The parts of the workspace context this editor uses. Not every workspace has getIsNew.
 type PickerWorkspaceContext = {
-  getUnique(): string | undefined;
+  getUnique(): string | null | undefined;
   getIsNew?(): boolean | undefined;
-  parentUnique?: Observable<string | null | undefined>;
 };
 
 type LanguageOption = { name: string; value: string; selected: boolean };
@@ -55,8 +52,8 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
   private _languageError: boolean = false;
 
   #workspaceContext?: PickerWorkspaceContext;
-  #structureContext?: UmbMenuStructureWorkspaceContext;
-  #nodeUnique?: string;
+  #hasParentContext = false;
+  #nodeUnique?: string | null;
   #propertyAlias?: string;
   // null means the content root; undefined means not known yet.
   #parentUnique?: string | null;
@@ -66,45 +63,29 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
   constructor() {
     super();
     this.consumeContext(UMB_WORKSPACE_CONTEXT, (context) => {
+      if (!context) return;
       this.#workspaceContext = context as unknown as PickerWorkspaceContext;
       //grab the node id (guid) from the context
       this.#nodeUnique = this.#workspaceContext.getUnique();
-      this.#observeParent();
+      if (this.#workspaceContext.getIsNew?.()) this._isEditing = true;
+      this.#loadLanguages();
     });
     // To get the alias of the UmbracoLanguagePicker property editor you need to use this
     this.consumeContext(UMB_PROPERTY_CONTEXT, (propertyContext) => {
+      if (!propertyContext) return;
       this.observe(propertyContext.alias, (propertyAlias) => {
         this.#propertyAlias = propertyAlias;
         this.#loadLanguages();
       });
     });
-    this.consumeContext('UmbMenuStructureWorkspaceContext', (instance: unknown) => {
-      this.#structureContext = instance as UmbMenuStructureWorkspaceContext;
-      this.#observeParent();
+    // The parent entity is known both when creating and when editing. The content root has a null unique.
+    this.consumeContext(UMB_PARENT_ENTITY_CONTEXT, (parentContext) => {
+      this.#hasParentContext = !!parentContext;
+      if (!parentContext) return;
+      this.observe(parentContext.parent, (parent) => {
+        if (parent) this.#setParent(parent.unique);
+      }, 'parentObserver');
     });
-  }
-
-  // The workspace and structure contexts can arrive in either order, so this runs when each one arrives.
-  #observeParent() {
-    const workspace = this.#workspaceContext;
-    if (!workspace) return;
-
-    if (workspace.getIsNew?.()) {
-      this._isEditing = true;
-      // A new node gets its parent from the create route. The structure context never loads for new nodes at the root.
-      if (workspace.parentUnique) {
-        this.observe(workspace.parentUnique, (unique) => this.#setParent(unique), 'parentObserver');
-      }
-    } else if (this.#structureContext) {
-      // The structure ends with the node itself. Its first item is the root, which has a null unique.
-      this.observe(
-          this.#structureContext.structure,
-          (structure) => {
-            if (structure.length >= 2) this.#setParent(structure[structure.length - 2].unique);
-          },
-          'parentObserver',
-      );
-    }
   }
 
   #setParent(unique: string | null | undefined) {
@@ -135,11 +116,10 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
   // Called whenever one of the inputs changes. Newer calls make older responses be ignored.
   async #loadLanguages(): Promise<void> {
     // The unique filter needs to know which property, node and parent this is before it can exclude used languages.
-    // Workspaces without a content tree (no parentUnique) never get a parent, so don't wait for one there.
-    const workspace = this.#workspaceContext;
-    const waitForParent = !!workspace?.parentUnique && this.#parentUnique === undefined;
-    const waitForNode = !!workspace && (!this.#nodeUnique || waitForParent);
-    if (this._uniqueFilter && (!this.#propertyAlias || waitForNode)) return;
+    // Places without a workspace or parent context (e.g. some block editors) never get those, so don't wait there.
+    const waitForNode = !!this.#workspaceContext && !this.#nodeUnique;
+    const waitForParent = this.#hasParentContext && this.#parentUnique === undefined;
+    if (this._uniqueFilter && (!this.#propertyAlias || waitForNode || waitForParent)) return;
     // Without the unique filter the list never depends on those inputs, so one request is enough.
     if (!this._uniqueFilter && this.#requestId > 0) return;
 
@@ -149,7 +129,9 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
       const names = await this.#languageNames;
 
       const authContext = await this.getContext(UMB_AUTH_CONTEXT);
-      const token = await authContext.getLatestToken();
+      if (!authContext) throw new Error("The auth context is not available");
+      // The backoffice uses cookie auth; this is Umbraco's documented way to call your own Management API endpoints.
+      const config = authContext.getOpenApiConfiguration();
       const query = new URLSearchParams({
         parentNodeIdOrGuid: this.#parentUnique ?? "",
         nodeIdOrGuid: this.#nodeUnique ?? "",
@@ -157,8 +139,9 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
         uniqueFilter: String(!!this._uniqueFilter),
         allowNull: String(!!this._allowNull),
       });
-      const response = await fetch(`/umbraco/management/api/v1/get-key-value-list?${query}`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await fetch(`${config.base ?? ""}/umbraco/management/api/v1/umbraco-language-picker/languages?${query}`, {
+        credentials: config.credentials,
+        headers: { Authorization: `Bearer ${await config.token()}` }
       });
       if (!response.ok) throw new Error(`Fetching languages failed: ${response.status} ${response.statusText}`);
       const languages: Array<{ key: string }> = await response.json();

@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ContentTargetFolders>.</ContentTargetFolders>
     <Product>UmbracoLanguagePicker</Product>
     <PackageId>UmbracoLanguagePicker</PackageId>
     <Title>UmbracoLanguagePicker</Title>
-    <Description>An Umbraco 14 property editor for picking one of the site's configured languages, with an optional unique-per-sibling filter.</Description>
+    <Description>An Umbraco 17 property editor for picking one of the site's configured languages, with an optional unique-per-sibling filter.</Description>
     <PackageTags>umbraco plugin package</PackageTags>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="14.2.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.7.0" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="17.7.0" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
-	  <PackageReference Include="UmbracoKeyValuePropertyEditor" Version="14.3.0" />
   </ItemGroup>
 
   <ItemGroup>
