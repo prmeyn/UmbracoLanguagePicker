@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Api.Management.Routing;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
@@ -17,11 +18,13 @@ namespace UmbracoLanguagePicker
     {
         private readonly UmbracoHelper _umbracoHelper;
         private readonly ILocalizationService _localizationService;
+        private readonly ILogger<LanguageApiController> _logger;
 
-        public LanguageApiController(UmbracoHelper umbracoHelper, ILocalizationService localizationService)
+        public LanguageApiController(UmbracoHelper umbracoHelper, ILocalizationService localizationService, ILogger<LanguageApiController> logger)
         {
             _umbracoHelper = umbracoHelper;
             _localizationService = localizationService;
+            _logger = logger;
         }
         
         [HttpGet("get-key-value-list")]
@@ -55,7 +58,11 @@ namespace UmbracoLanguagePicker
                     }
                     usedUpLanguageCodes = GetValuesOfChildrensProperty(parentNode, propertyAlias, currentNode?.Id).ToArray();
                 }
-                catch { uniqueFilter = false; }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Could not read sibling values for property {PropertyAlias} (node {NodeIdOrGuid}, parent {ParentNodeIdOrGuid}); showing all languages instead of applying the unique filter", propertyAlias, nodeIdOrGuid, parentNodeIdOrGuid);
+                    uniqueFilter = false;
+                }
                 
                 LanguageDTO[] languageList = null;
                 if (uniqueFilter)
@@ -72,9 +79,10 @@ namespace UmbracoLanguagePicker
                 }
                 return languageList.ToDictionary(c => c.ISOCode.ToLowerInvariant(), c => "").OrderBy(v => v.Key);
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                _logger.LogError(ex, "Could not build the language list for property {PropertyAlias}", propertyAlias);
+                throw;
             }
         }
 

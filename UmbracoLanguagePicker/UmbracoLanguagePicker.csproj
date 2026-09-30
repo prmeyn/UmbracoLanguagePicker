@@ -5,7 +5,7 @@
     <Product>UmbracoLanguagePicker</Product>
     <PackageId>UmbracoLanguagePicker</PackageId>
     <Title>UmbracoLanguagePicker</Title>
-    <Description>...</Description>
+    <Description>An Umbraco 14 property editor for picking one of the site's configured languages, with an optional unique-per-sibling filter.</Description>
     <PackageTags>umbraco plugin package</PackageTags>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
@@ -17,7 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="App_Plugins\LanguagePicker\**">
+    <!-- Only ship the built client files, not src/ or node_modules/ -->
+    <Content Include="App_Plugins\LanguagePicker\dist\**;App_Plugins\LanguagePicker\Localization\**;App_Plugins\LanguagePicker\umbraco-package.json">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </Content>
