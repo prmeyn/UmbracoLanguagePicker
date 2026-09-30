@@ -1,0 +1,17 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "Category": "Editor Tools",
+  "AlternateCategory": "Translations",
+  "Title": "Umbraco Language Picker",
+  "Description": "A property editor for picking one of the site's configured languages, with an optional unique-per-sibling filter.",
+  "PackageType": "Package",
+  "LicenseTypes": ["Free"],
+  "Tags": ["language", "culture", "property editor", "multilingual"],
+  "DocumentationUrl": "https://github.com/prmeyn/UmbracoLanguagePicker#readme",
+  "IssueTrackerUrl": "https://github.com/prmeyn/UmbracoLanguagePicker/issues",
+  "AuthorDetails": {
+    "Name": "prmeyn",
+    "Url": "https://github.com/prmeyn",
+    "SyncContributorsFromRepository": true
+  }
+}
