@@ -1,0 +1,38 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "Category": "Editor Tools",
+  "AlternateCategory": "Translations",
+  "Title": "Umbraco Language Picker",
+  "Description": "A property editor for picking one of the site's configured languages, with an optional unique-per-sibling filter.",
+  "PackageType": "Package",
+  "LicenseTypes": [
+    "Free"
+  ],
+  "Tags": [
+    "language",
+    "culture",
+    "property editor",
+    "multilingual"
+  ],
+  "DocumentationUrl": "https://github.com/prmeyn/UmbracoLanguagePicker#readme",
+  "IssueTrackerUrl": "https://github.com/prmeyn/UmbracoLanguagePicker/issues",
+  "AuthorDetails": {
+    "Name": "prmeyn",
+    "Url": "https://github.com/prmeyn",
+    "SyncContributorsFromRepository": true
+  },
+  "Screenshots": [
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/prmeyn/UmbracoLanguagePicker/main/docs/screenshots/picker-value.png",
+      "Caption": "On an existing node, the picker shows the current language with an Edit button."
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/prmeyn/UmbracoLanguagePicker/main/docs/screenshots/picker-dropdown.png",
+      "Caption": "With Unique Filter on, languages already used by sibling nodes (German and Swedish here) are left out. NONE appears when Allow no value is on."
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/prmeyn/UmbracoLanguagePicker/main/docs/screenshots/datatype-settings.png",
+      "Caption": "Data Type settings: Unique Filter and Allow no value."
+    }
+  ]
+}

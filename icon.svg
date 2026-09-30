@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="48" fill="#3544b1"/>
+  <g fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M78 212V48"/>
+    <path d="M78 56c26-14 50-14 74 0s48 14 74 0v88c-26 14-50 14-74 0s-48-14-74 0"/>
+  </g>
+  <text x="152" y="118" font-family="Helvetica, Arial, sans-serif" font-size="46" font-weight="700" fill="#ffffff" text-anchor="middle">Aa</text>
+</svg>

@@ -6,15 +6,21 @@
     <PackageId>UmbracoLanguagePicker</PackageId>
     <Title>UmbracoLanguagePicker</Title>
     <Description>An Umbraco 17 property editor for picking one of the site's configured languages, with an optional unique-per-sibling filter.</Description>
-    <PackageTags>umbraco plugin package</PackageTags>
+    <PackageTags>umbraco umbraco-marketplace plugin package property-editor language</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>prmeyn</Authors>
+    <PackageProjectUrl>https://github.com/prmeyn/UmbracoLanguagePicker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/prmeyn/UmbracoLanguagePicker</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.7.0" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="17.7.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.7.0, 18.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.7.0, 18.0.0)" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
+	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
