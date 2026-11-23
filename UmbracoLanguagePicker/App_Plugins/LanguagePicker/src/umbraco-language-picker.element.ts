@@ -1,5 +1,5 @@
 import { LitElement, html, css, customElement, property, state } from "@umbraco-cms/backoffice/external/lit";
-import { UmbPropertyValueChangeEvent } from "@umbraco-cms/backoffice/property-editor";
+import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
 // Needed for language picker config values 'allowNull' and 'uniqueFilter'
 import type { UmbPropertyEditorConfigCollection, UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/property-editor";
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
@@ -165,7 +165,7 @@ export default class UmbracoLanguagePickerElement extends UmbElementMixin(LitEle
 
   private async handleSelectChange(e: UUISelectEvent): Promise<void> {
     this.value = e.target.value as string;
-    this.dispatchEvent(new UmbPropertyValueChangeEvent());
+    this.dispatchEvent(new UmbChangeEvent());
     if (this.#languageNames) {
       this._displayValue = this.#getDisplayName(await this.#languageNames, this.value);
     }

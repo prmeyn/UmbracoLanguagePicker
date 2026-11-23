@@ -1,6 +1,6 @@
 # UmbracoLanguagePicker
 
-A property editor for the Umbraco 17 backoffice. Editors use it to pick one of the languages set up under **Settings → Languages**. The value is saved as the language's ISO code (for example `da-dk`), so you can use it in templates to set a culture, filter content, or build language switchers.
+A property editor for the Umbraco 18 backoffice. Editors use it to pick one of the languages set up under **Settings → Languages**. The value is saved as the language's ISO code (for example `da-dk`), so you can use it in templates to set a culture, filter content, or build language switchers.
 
 ## Features
 
@@ -11,11 +11,12 @@ A property editor for the Umbraco 17 backoffice. Editors use it to pick one of t
 
 ## Requirements
 
-- Umbraco CMS 17.7.0 or later 17.x
+- Umbraco CMS 18.0.0 or later 18.x.
 - .NET 10
 
 | Umbraco version | Package version |
 | --- | --- |
+| 18 | 18.x |
 | 17 | 17.x |
 | 14 | 14.11.0 (no longer maintained; Umbraco 14 is end of life) |
 

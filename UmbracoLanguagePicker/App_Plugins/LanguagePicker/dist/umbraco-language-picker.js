@@ -1,5 +1,5 @@
-import { LitElement as $, html as k, css as V, property as W, state as v, customElement as A } from "@umbraco-cms/backoffice/external/lit";
-import { UmbPropertyValueChangeEvent as B } from "@umbraco-cms/backoffice/property-editor";
+import { LitElement as $, html as k, css as A, property as W, state as v, customElement as V } from "@umbraco-cms/backoffice/external/lit";
+import { UmbChangeEvent as B } from "@umbraco-cms/backoffice/event";
 import { UmbElementMixin as F } from "@umbraco-cms/backoffice/element-api";
 import { UMB_WORKSPACE_CONTEXT as D } from "@umbraco-cms/backoffice/workspace";
 import { UMB_AUTH_CONTEXT as I } from "@umbraco-cms/backoffice/auth";
@@ -144,7 +144,7 @@ m = async function() {
   }
 };
 l.styles = [
-  V`
+  A`
       .data-api-picker-edit-label {
         font-size: 13px;
       }
@@ -186,7 +186,7 @@ u([
   v()
 ], l.prototype, "_languageError", 2);
 l = u([
-  A("umbraco-language-picker")
+  V("umbraco-language-picker")
 ], l);
 export {
   l as default
