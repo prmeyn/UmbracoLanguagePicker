@@ -1,7 +1,7 @@
 {
   "name": "umbraco-language-picker",
   "private": true,
-  "version": "17.0.0",
+  "version": "18.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@umbraco-cms/backoffice": "^17.7.0",
+    "@umbraco-cms/backoffice": "^18.3.2",
     "typescript": "^5.2.2",
     "vite": "^5.1.6"
   }
